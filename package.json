@@ -9,6 +9,7 @@
     "build": "snowpack build"
   },
   "dependencies": {
+    "date-fns": "^2.16.1",
     "vue": "^3.0.4",
     "vue-class-component": "^8.0.0-rc.1"
   },
