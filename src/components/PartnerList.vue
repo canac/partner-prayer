@@ -10,6 +10,12 @@
 import { Vue } from 'vue-class-component';
 
 export default class PartnerList extends Vue {
-  readonly partners: string[] = ['Alice', 'Bob', 'Charlie'];
+  partners: string[] = [];
+
+  beforeCreate() {
+    fetch('/api/partners').then(async (res) => {
+      this.partners = await res.json();
+    });
+  }
 };
 </script>
