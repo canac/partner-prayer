@@ -1,9 +1,15 @@
 <template>
-  <p>Hello World</p>
+  <PartnerList />
 </template>
 
 <script lang="ts">
-export default {
-  name: 'App',
-}
+import { Options, Vue } from 'vue-class-component';
+import PartnerList from './components/PartnerList.vue';
+
+@Options({
+  components: {
+    PartnerList,
+  },
+})
+export default class App extends Vue {};
 </script>
