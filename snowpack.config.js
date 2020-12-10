@@ -1,8 +1,6 @@
 const app = require('express')();
-
-app.get('/api/partners', (req, res) => {
-  res.json(require('./data/partners.json'));
-});
+const { addPartnersRoute } = require('./server/api.js');
+addPartnersRoute(app);
 
 module.exports = {
   mount: {
