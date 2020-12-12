@@ -1,8 +1,13 @@
-import { ref, Ref } from 'vue';
+import reactive from '../helpers/reactive';
 import { eachDayOfInterval, endOfMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
 
 export default class PartnerService {
+  @reactive
   private partners: string[] = [];
+
+  constructor() {
+    this.loadPartners();
+  }
 
   // Load the partners from the network
   async loadPartners() {

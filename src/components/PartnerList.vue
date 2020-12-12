@@ -21,10 +21,6 @@ export default class PartnerList extends Vue {
 
   partnerService: PartnerService = new PartnerService();
 
-  mounted() {
-    this.partnerService.loadPartners();
-  }
-
   calculatePartnersInRange(start: Date, end: Date) {
     return eachDayOfInterval({ start, end }).map(day => this.partnerService.getPartnersForDay(day));
   }
