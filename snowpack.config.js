@@ -4,7 +4,7 @@ addPartnersRoute(app);
 
 module.exports = {
   mount: {
-    public: '/',
+    public: { url: '/', static: true },
     src: '/_dist_',
   },
   experiments: {
