@@ -1,11 +1,16 @@
 <template>
   <div class="partner-list">
-    <div class="day" v-for="day in incompleteDays" :key="day.id">
+    <div class="day" v-for="day in visibleDays" :key="day.id">
       <div class="day-name">
         {{ formatDay(day.day) }}
       </div>
       <div class="partners">
-        <div class="partner" v-for="partner in day.partners" :key="partner">
+        <div
+          class="partner"
+          :class="{ complete: day.completed, incomplete: !day.completed }"
+          v-for="partner in day.partners"
+          :key="partner"
+        >
           {{ partner }}
         </div>
       </div>
@@ -16,13 +21,21 @@
 <script lang="ts">
 import {
   addDays, getDate, eachDayOfInterval, eachMonthOfInterval,
-  endOfMonth, format, isWeekend, startOfDay, startOfMonth, subDays,
+  endOfMonth, format, isBefore, isWeekend, startOfDay, startOfMonth, subDays,
 } from 'date-fns';
 import PartnerService from '../services/PartnerService';
 import { Vue } from 'vue-class-component';
 
+type DayInfo = {
+  id: number;
+  partners: string[];
+  day: Date;
+  completed: boolean;
+};
+
 export default class PartnerList extends Vue {
   lastCompletedDay: Date = subDays(startOfDay(new Date()), 3);
+  numVisibleDays: number = 10;
 
   partnerService: PartnerService = new PartnerService();
 
@@ -30,10 +43,18 @@ export default class PartnerList extends Vue {
     return eachDayOfInterval({ start, end }).map(day => this.partnerService.getPartnersForDay(day));
   }
 
-  get incompleteDays() {
-    const firstIncompleteDay = addDays(this.lastCompletedDay, 1);
-    return eachDayOfInterval({ start: firstIncompleteDay, end: startOfDay(new Date()) })
-      .map((day, index) => ({ partners: this.partnerService.getPartnersForDay(day), day, id: index }));
+  get visibleDays(): DayInfo[] {
+    return eachDayOfInterval({
+      start: subDays(startOfDay(new Date()), this.numVisibleDays),
+      end: startOfDay(new Date())
+    }).map((day, index): DayInfo => {
+      return {
+        id: index,
+        partners: this.partnerService.getPartnersForDay(day),
+        day,
+        completed: !isBefore(this.lastCompletedDay, day),
+      };
+    });
   }
 
   formatDay(day: Date) {
@@ -73,5 +94,12 @@ export default class PartnerList extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.partner.incomplete {
+  background-color: hsl(0, 50%, 80%);
+}
+.partner.complete {
+  background-color: hsl(120, 50%, 80%);
 }
 </style>
