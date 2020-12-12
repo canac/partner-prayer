@@ -3,6 +3,7 @@
     <div class="day" v-for="day in visibleDays" :key="day.id">
       <div class="day-name">
         {{ formatDay(day.day) }}
+        <button @click="completeDay(day)" v-if="!day.completed && day.partners.length > 0">Complete</button>
       </div>
       <div class="partners">
         <div
@@ -59,6 +60,10 @@ export default class PartnerList extends Vue {
 
   formatDay(day: Date) {
     return format(day, 'EEEE, MMMM d');
+  }
+
+  completeDay(day: DayInfo) {
+    this.lastCompletedDay = day.day;
   }
 };
 </script>
