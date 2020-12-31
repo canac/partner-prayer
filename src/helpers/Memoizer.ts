@@ -2,10 +2,12 @@ export default class Memoizer<Key, Value, SerializedKey = Key> {
   private cache: Map<SerializedKey, Value> = new Map();
   private compute: (Key) => Value;
   private serializeKey: (Key) => SerializedKey;
+  private reviveKey: (SerializedKey) => Key;
 
-  constructor(compute: (Key) => Value, serializeKey: (Key) => SerializedKey) {
+  constructor(compute: (Key) => Value, serializeKey: (Key) => SerializedKey, reviveKey?: (SerializedKey) => Key) {
     this.compute = compute;
     this.serializeKey = serializeKey;
+    this.reviveKey = reviveKey;
   }
 
   // Get the value, loading it out of the cache if available
@@ -21,8 +23,17 @@ export default class Memoizer<Key, Value, SerializedKey = Key> {
     return computed;
   }
 
-  // Clear the memo cache
-  reset() {
+  // Evict all entries in the memo cache
+  evictAll() {
     this.cache.clear();
+  }
+
+  // Evict all entries in the memo cache that the predicate returns true for
+  evictSome(predicate: (Key, Value) => boolean) {
+    for (const [serializedKey, value] of this.cache.entries()) {
+      if (predicate(this.reviveKey(serializedKey), value)) {
+        this.cache.delete(serializedKey);
+      }
+    }
   }
 }

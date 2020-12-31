@@ -1,10 +1,14 @@
 import reactive from '../helpers/reactive';
 import DefaultDayMap from '../helpers/DefaultDayMap';
 import Memoizer from '../helpers/Memoizer';
-import { eachDayOfInterval, endOfMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
+import { eachDayOfInterval, endOfMonth, isSameMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
 
 function serializeDate(day: Date): number {
   return day.getTime();
+}
+
+function reviveDate(time: number): Date {
+  return new Date(time);
 }
 
 export default class PartnerService {
@@ -14,11 +18,14 @@ export default class PartnerService {
   @reactive
   private skippedDays: DefaultDayMap<boolean> = new DefaultDayMap((day: Date) => isWeekend(day));
 
-  private dayMemoizer: Memoizer<Date, string[], number> = new Memoizer((day: Date) => this.calculatePartnersForDay(day), serializeDate);
-  private monthMemoizer: Memoizer<Date, string[][], number> = new Memoizer((day: Date) => this.calculatePartnerDistributionForMonth(day), serializeDate);
+  private dayMemoizer: Memoizer<Date, string[], number>;
+  private monthMemoizer: Memoizer<Date, string[][], number>;
 
   constructor() {
     this.loadPartners();
+
+    this.dayMemoizer = new Memoizer((day: Date) => this.calculatePartnersForDay(day), serializeDate, reviveDate);
+    this.monthMemoizer = new Memoizer((day: Date) => this.calculatePartnerDistributionForMonth(day), serializeDate, reviveDate);
   }
 
   // Load the partners from the network
@@ -27,8 +34,8 @@ export default class PartnerService {
     this.partners = await res.json();
 
     // Clear the memoization cache because the partner list changed
-    this.dayMemoizer.reset();
-    this.monthMemoizer.reset();
+    this.dayMemoizer.evictAll();
+    this.monthMemoizer.evictAll();
   }
 
   // Run calculatePartnersForDay, using the memoized result if available
@@ -75,9 +82,10 @@ export default class PartnerService {
   setDaySkipped(day: Date, isSkipped: boolean) {
     this.skippedDays.set(day, isSkipped);
 
-    // The partner distributions must be recalculated now
-    this.dayMemoizer.reset();
-    this.monthMemoizer.reset();
+    // Recalculate all days and months that are in the month that was updated
+    const predicate = (cachedDay: Date) => isSameMonth(day, cachedDay);
+    this.dayMemoizer.evictSome(predicate);
+    this.monthMemoizer.evictSome(predicate);
   }
 
   static normalizeDay(day: Date): Date {
