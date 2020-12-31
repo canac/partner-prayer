@@ -13,9 +13,7 @@
       <div>Sa</div>
     </div>
     <div class="date-grid" :style="{ '--day-offset': dayOffset + 1 }">
-      <div class="date" v-for="day in days" :key="day.getDate()">
-        <slot :day="day" />
-      </div>
+      <slot :day="day" v-for="day in days" :key="day.getDate()" />
     </div>
   </div>
 </template>
@@ -69,6 +67,8 @@ export default class MonthCalendar extends Vue {
 .weekday-titles, .date-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;
+  grid-gap: 2px;
 }
 
 .date-grid :first-child {

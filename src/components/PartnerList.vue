@@ -49,9 +49,11 @@ export default class PartnerList extends Vue {
 
 <style scoped>
 .day {
-  text-align: center;
-  padding: 3em 0;
-  margin: 1px;
+  padding: 1em;
+}
+
+.partner {
+  padding: 0.25em 0;
 }
 
 .day.incomplete {
