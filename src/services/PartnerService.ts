@@ -1,6 +1,7 @@
 import reactive from '../helpers/reactive';
+import DaySet from '../helpers/DaySet';
 import Memoizer from '../helpers/Memoizer';
-import { eachDayOfInterval, endOfMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
+import { eachDayOfInterval, endOfMonth, startOfDay, startOfMonth } from 'date-fns';
 
 function serializeDate(day: Date): number {
   return day.getTime();
@@ -9,6 +10,9 @@ function serializeDate(day: Date): number {
 export default class PartnerService {
   @reactive
   private partners: string[] = [];
+
+  @reactive
+  private skippedDays: DaySet = new DaySet();
 
   private dayMemoizer: Memoizer<Date, string[], number> = new Memoizer((day: Date) => this.calculatePartnersForDay(day), serializeDate);
   private monthMemoizer: Memoizer<Date, string[][], number> = new Memoizer((day: Date) => this.calculatePartnerDistributionForMonth(day), serializeDate);
@@ -47,19 +51,37 @@ export default class PartnerService {
   // the month, etc.
   private calculatePartnerDistributionForMonth(month: Date): string[][] {
     const daysInMonth: Date[] = eachDayOfInterval({ start: startOfMonth(month), end: endOfMonth(month) });
-    const numWeekdays: number = daysInMonth.filter(day => !isWeekend(day)).length;
-    let weekdayIndex: number = 0;
+    const numDays: number = daysInMonth.filter(day => !this.isDaySkipped(day)).length;
+    let dayIndex: number = 0;
     return daysInMonth.map((day: Date): string[] => {
-      if (isWeekend(day)) {
+      if (this.isDaySkipped(day)) {
         return [];
       }
 
-      const startIndex = Math.floor(weekdayIndex * this.partners.length / numWeekdays);
-      const endIndex = Math.floor((weekdayIndex + 1) * this.partners.length / numWeekdays);
-      ++weekdayIndex;
+      const startIndex = Math.floor(dayIndex * this.partners.length / numDays);
+      const endIndex = Math.floor((dayIndex + 1) * this.partners.length / numDays);
+      ++dayIndex;
 
       return this.partners.slice(startIndex, endIndex);
     });
+  }
+
+  // Determine whether this day should be allocated partners or whether it should be skipped
+  isDaySkipped(day: Date): boolean {
+    return this.skippedDays.has(day);
+  }
+
+  // Set the skipped status of the specified date
+  setDaySkipped(day: Date, isSkipped: boolean) {
+    if (isSkipped) {
+      this.skippedDays.add(day);
+    } else {
+      this.skippedDays.delete(day);
+    }
+
+    // The partner distributions must be recalculated now
+    this.dayMemoizer.reset();
+    this.monthMemoizer.reset();
   }
 
   static normalizeDay(day: Date): Date {

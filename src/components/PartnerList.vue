@@ -6,8 +6,8 @@
           <div class="button-slot">
             <button
               class="toggle-active"
-              @click="toggleDayActive(day)">
-              <i class="fas" :class="isDayActive(day) ? 'fa-eye-slash' : 'fa-eye'" />
+              @click="toggleDaySkipped(day)">
+              <i class="fas fa-fw" :class="isDaySkipped(day) ? 'fa-eye' : 'fa-eye-slash'" />
             </button>
           </div>
           <span class="day-title">{{ day.getDate() }}</span>
@@ -15,14 +15,14 @@
             <button
               class="mark-complete"
               @click="completeDay(day)"
-              v-if="!isDayCompleted(day) && getDayPartners(day).length > 0">
-              <i class="fas fa-check" />
+              v-if="!isDayCompleted(day) && !isDaySkipped(day)">
+              <i class="fas fa-fw fa-check" />
             </button>
             <button
               class="mark-incomplete"
               @click="uncompleteDay(day)"
-              v-if="isDayCompleted(day) && getDayPartners(day).length > 0">
-              <i class="fas fa-trash" />
+              v-if="isDayCompleted(day) && !isDaySkipped(day)">
+              <i class="fas fa-fw fa-trash" />
             </button>
           </div>
         </div>
@@ -35,10 +35,10 @@
 </template>
 
 <script lang="ts">
-import '@fortawesome/fontawesome-free/js/fontawesome.js';
-import '@fortawesome/fontawesome-free/js/solid.js';
+import '@fortawesome/fontawesome-free/css/solid.css';
+import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
-import { isBefore, isWeekend, startOfDay, subDays } from 'date-fns';
+import { isBefore, startOfDay, subDays } from 'date-fns';
 import PartnerService from '../services/PartnerService';
 import MonthCalendar from './MonthCalendar.vue';
 import { Options, Vue } from 'vue-class-component';
@@ -55,19 +55,16 @@ export default class PartnerList extends Vue {
 
   lastCompletedDay: Date = subDays(startOfDay(new Date()), 3);
 
+  isDaySkipped(day: Date): boolean {
+    return partnerService.isDaySkipped(day);
+  }
+
+  toggleDaySkipped(day: Date) {
+    partnerService.setDaySkipped(day, !this.isDaySkipped(day));
+  }
+
   isDayCompleted(day: Date): boolean {
     return !isBefore(this.lastCompletedDay, day);
-  }
-
-  isDayActive(day: Date): boolean {
-    return !isWeekend(day);
-  }
-
-  getDayPartners(day: Date): string[] {
-    return partnerService.getPartnersForDay(day);
-  }
-
-  toggleDayActive(day: Date) {
   }
 
   completeDay(day: Date) {
@@ -77,10 +74,18 @@ export default class PartnerList extends Vue {
   uncompleteDay(day: Date) {
     this.lastCompletedDay = subDays(day, 1);
   }
+
+  getDayPartners(day: Date): string[] {
+    return partnerService.getPartnersForDay(day);
+  }
 };
 </script>
 
 <style scoped>
+.partner-list {
+  --icon-font-size: 1.3em;
+}
+
 .day {
   padding: 0.5em 1em;
 }
@@ -88,11 +93,11 @@ export default class PartnerList extends Vue {
 .day-header {
   padding-bottom: 0.25em;
   display: flex;
-  font-size: 1.3em;
+  font-size: var(--icon-font-size);
 }
 
 .day-header .button-slot {
-  width: 1.7em;
+  width: var(--icon-font-size);
 }
 
 .day-header button {
