@@ -1,6 +1,6 @@
 const app = require('express')();
-const { addPartnersRoute } = require('./server/api.js');
-addPartnersRoute(app);
+const { addApiRoutes } = require('./server/api.js');
+addApiRoutes(app);
 
 module.exports = {
   mount: {
