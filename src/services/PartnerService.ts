@@ -1,6 +1,6 @@
 import reactive from '../helpers/reactive';
-import DefaultDayMap from '../helpers/DefaultDayMap';
 import Memoizer from '../helpers/Memoizer';
+import { settingsServiceSingleton } from './SettingsService';
 import { eachDayOfInterval, endOfMonth, isSameMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
 
 function serializeDate(day: Date): number {
@@ -14,9 +14,6 @@ function reviveDate(time: number): Date {
 export default class PartnerService {
   @reactive
   private partners: string[] = [];
-
-  @reactive
-  private skippedDays: DefaultDayMap<boolean> = new DefaultDayMap((day: Date) => isWeekend(day));
 
   private dayMemoizer: Memoizer<Date, string[], number>;
   private monthMemoizer: Memoizer<Date, string[][], number>;
@@ -75,12 +72,14 @@ export default class PartnerService {
 
   // Determine whether this day should be allocated partners or whether it should be skipped
   isDaySkipped(day: Date): boolean {
-    return this.skippedDays.get(day);
+    return settingsServiceSingleton.getSettings().skippedDays.get(day);
   }
 
   // Set the skipped status of the specified date
   setDaySkipped(day: Date, isSkipped: boolean) {
-    this.skippedDays.set(day, isSkipped);
+    const skippedDays = settingsServiceSingleton.getSettings().skippedDays;
+    skippedDays.set(day, isSkipped);
+    settingsServiceSingleton.setSettings({ skippedDays });
 
     // Recalculate all days and months that are in the month that was updated
     const predicate = (cachedDay: Date) => isSameMonth(day, cachedDay);

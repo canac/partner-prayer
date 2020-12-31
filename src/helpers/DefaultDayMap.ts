@@ -4,8 +4,8 @@ import DayMap from './DayMap';
 export default class DefaultDayMap<T> extends DayMap<T> {
   private readonly defaultVal: (Date) => T;
 
-  constructor(defaultVal: (Date) => T) {
-    super();
+  constructor(defaultVal: (Date) => T, entries?: Iterable<[Date, T]>) {
+    super(entries);
 
     this.defaultVal = defaultVal;
   }

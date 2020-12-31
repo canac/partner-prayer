@@ -13,14 +13,21 @@ module.exports.addApiRoutes = function(app) {
   });
 
   let settings = {
-    lastCompletedDay: new Date(0),
+    lastCompletedDay: new Date(0).toISOString(),
+    skippedDays: {},
   };
   app.get('/api/settings', (req, res) => {
     res.header('Content-Type', 'application/json');
     res.send(settings);
   });
   app.post('/api/settings', (req, res) => {
-    Object.assign(settings, req.body);
+    const newSettings = req.body;
+    if (newSettings.lastCompletedDay) {
+      settings.lastCompletedDay = newSettings.lastCompletedDay;
+    }
+    if (newSettings.skippedDays) {
+      Object.assign(settings.skippedDays, newSettings.skippedDays);
+    }
     res.header('Content-Type', 'application/json');
     res.send({});
   })
