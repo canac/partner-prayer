@@ -1,7 +1,7 @@
 <template>
   <div class="partner-list">
     <MonthCalendar :month="activeMonth" v-slot:default="{ day }">
-      <div class="day" :class="isDayCompleted(day) ? 'complete' : 'incomplete'">
+      <div class="day" :class="isDaySkipped(day) ? 'skipped' : (isDayCompleted(day) ? 'complete' : 'incomplete')">
         <div class="day-header">
           <div class="button-slot">
             <button
@@ -126,6 +126,9 @@ export default class PartnerList extends Vue {
   padding: 0.25em 0;
 }
 
+.day.skipped {
+  background-color: hsl(0, 0%, 80%);
+}
 .day.incomplete {
   background-color: hsl(0, 50%, 80%);
 }
