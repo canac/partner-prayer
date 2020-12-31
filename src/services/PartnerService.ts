@@ -1,7 +1,7 @@
 import reactive from '../helpers/reactive';
-import DaySet from '../helpers/DaySet';
+import DefaultDayMap from '../helpers/DefaultDayMap';
 import Memoizer from '../helpers/Memoizer';
-import { eachDayOfInterval, endOfMonth, startOfDay, startOfMonth } from 'date-fns';
+import { eachDayOfInterval, endOfMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
 
 function serializeDate(day: Date): number {
   return day.getTime();
@@ -12,7 +12,7 @@ export default class PartnerService {
   private partners: string[] = [];
 
   @reactive
-  private skippedDays: DaySet = new DaySet();
+  private skippedDays: DefaultDayMap<boolean> = new DefaultDayMap((day: Date) => isWeekend(day));
 
   private dayMemoizer: Memoizer<Date, string[], number> = new Memoizer((day: Date) => this.calculatePartnersForDay(day), serializeDate);
   private monthMemoizer: Memoizer<Date, string[][], number> = new Memoizer((day: Date) => this.calculatePartnerDistributionForMonth(day), serializeDate);
@@ -68,16 +68,12 @@ export default class PartnerService {
 
   // Determine whether this day should be allocated partners or whether it should be skipped
   isDaySkipped(day: Date): boolean {
-    return this.skippedDays.has(day);
+    return this.skippedDays.get(day);
   }
 
   // Set the skipped status of the specified date
   setDaySkipped(day: Date, isSkipped: boolean) {
-    if (isSkipped) {
-      this.skippedDays.add(day);
-    } else {
-      this.skippedDays.delete(day);
-    }
+    this.skippedDays.set(day, isSkipped);
 
     // The partner distributions must be recalculated now
     this.dayMemoizer.reset();
