@@ -40,12 +40,11 @@ import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
 import { isBefore, startOfDay, subDays } from 'date-fns';
 import PartnerService from '../services/PartnerService';
-import SettingsService from '../services/SettingsService';
+import { settingsServiceSingleton } from '../services/SettingsService';
 import MonthCalendar from './MonthCalendar.vue';
 import { Options, Vue } from 'vue-class-component';
 
 const partnerService: PartnerService = new PartnerService();
-const settingsService: SettingsService = new SettingsService();
 
 @Options({
   components: {
@@ -56,7 +55,7 @@ export default class PartnerList extends Vue {
   activeMonth: Date = new Date();
 
   get lastCompletedDay(): Date {
-    return settingsService.getSettings().lastCompletedDay;
+    return settingsServiceSingleton.getSettings().lastCompletedDay;
   }
 
   isDaySkipped(day: Date): boolean {
@@ -72,13 +71,13 @@ export default class PartnerList extends Vue {
   }
 
   completeDay(day: Date) {
-    settingsService.setSettings({
+    settingsServiceSingleton.setSettings({
       lastCompletedDay: day,
     });
   }
 
   uncompleteDay(day: Date) {
-    settingsService.setSettings({
+    settingsServiceSingleton.setSettings({
       lastCompletedDay: subDays(day, 1),
     });
   }
