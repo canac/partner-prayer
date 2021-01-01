@@ -4,6 +4,7 @@
   "description": "Partner Prayer",
   "author": "Caleb Cox",
   "license": "MIT",
+  "main": "server/app.mjs",
   "scripts": {
     "dev": "snowpack dev",
     "build": "snowpack build"
