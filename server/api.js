@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const fs = require('fs');
 const bodyParser = require('body-parser');
 
 const { getDb } = require('./db.js');
@@ -8,9 +7,11 @@ const { getDb } = require('./db.js');
 module.exports.addApiRoutes = function(app) {
   app.use(bodyParser.json());
 
-  let partners = null;
-  app.get('/api/partners', (req, res) => {
-    partners ||= fs.readFileSync('./data/partners.json', 'utf8');
+  app.get('/api/partners', async (req, res) => {
+    const db = await getDb();
+
+    const partnerDocs = await db.collection('partners').find().toArray();
+    const partners = partnerDocs.map(({ name }) => name);
 
     res.header('Content-Type', 'application/json');
     res.send(partners);
