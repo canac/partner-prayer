@@ -3,6 +3,7 @@ const { MongoClient } = require('mongodb');
 let db = null;
 
 const {
+  DB_PROTOCOL: protocol,
   DB_HOST: host,
   DB_USER: user,
   DB_PASS: password,
@@ -13,7 +14,8 @@ async function getDb() {
     return db;
   }
 
-  const uri = `mongodb+srv://${user}:${password}@${host}/partnerPrayer?retryWrites=true&w=majority`;
+  const auth = user || password ? `${user}:${password}@` : '';
+  const uri = `${protocol}://${auth}${host}/partnerPrayer?retryWrites=true&w=majority`;
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
   await client.connect();
   return client.db('partnerPrayer');
