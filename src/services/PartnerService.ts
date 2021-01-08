@@ -27,7 +27,7 @@ export default class PartnerService {
 
   // Load the partners from the network
   async loadPartners() {
-    const res = await fetch('/api/partners');
+    const res = await fetch(`${import.meta.env.SNOWPACK_PUBLIC_API_BASE}/api/partners`);
     this.partners = await res.json();
 
     // Clear the memoization cache because the partner list changed

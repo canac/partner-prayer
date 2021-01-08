@@ -37,7 +37,7 @@ export default class SettingsService {
   }
 
   async loadSettings() {
-    const res = await fetch('/api/settings');
+    const res = await fetch(`${import.meta.env.SNOWPACK_PUBLIC_API_BASE}/api/settings`);
     const settings = await res.json() as SerializedSettings;
     this.settings.lastCompletedDay = new Date(settings.lastCompletedDay);
     this.settings.skippedDays = new SkippedDays(Object.entries(settings.skippedDays).map(([day, isSkipped]) => [new Date(day), isSkipped]));
@@ -58,7 +58,7 @@ export default class SettingsService {
       serializedSettings.skippedDays = Object.fromEntries([...changedSettings.skippedDays.entries()].map(([day, isSkipped]) => [day.toISOString(), isSkipped]));
     }
 
-    fetch('/api/settings', {
+    fetch(`${import.meta.env.SNOWPACK_PUBLIC_API_BASE}/api/settings`, {
       method: 'post',
       headers: {
         'content-type': 'application/json',
