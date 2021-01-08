@@ -37,11 +37,17 @@ export default class PartnerService {
 
   // Run calculatePartnersForDay, using the memoized result if available
   getPartnersForDay(day: Date): string[] {
+    // Manually touch reactive dependencies so that this will update when the partners change
+    this.partners;
+
     return this.dayMemoizer.get(PartnerService.normalizeDay(day));
   }
 
   // Run getPartnerDistributionForMonth, using the memoized result if available
   getPartnerDistributionForMonth(day: Date): string[][] {
+    // Manually touch reactive dependencies so that this will update when the partners change
+    this.partners;
+
     return this.monthMemoizer.get(PartnerService.normalizeDay(day));
   }
 
