@@ -1,7 +1,7 @@
 import reactive from '../helpers/reactive';
 import Memoizer from '../helpers/Memoizer';
 import { settingsServiceSingleton } from './SettingsService';
-import { eachDayOfInterval, endOfMonth, isSameMonth, isWeekend, startOfDay, startOfMonth } from 'date-fns';
+import { eachDayOfInterval, endOfMonth, isSameMonth, startOfDay, startOfMonth } from 'date-fns';
 
 function serializeDate(day: Date): number {
   return day.getTime();
