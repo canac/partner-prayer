@@ -38,7 +38,8 @@
 import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
-import { addMinutes, format, isBefore, startOfDay, startOfMonth, subDays } from 'date-fns';
+import { addMinutes, isBefore, startOfDay, startOfMonth, subDays } from 'date-fns';
+import { dateToGqlDate, query } from '../api/api';
 import MonthCalendar from './MonthCalendar.vue';
 import { Options, Vue } from 'vue-class-component';
 
@@ -60,7 +61,7 @@ export default class PartnerList extends Vue {
   partnersByDay: Partner[][] = [];
 
   async mounted() {
-    const query = `
+    const data = await query(`
       query LoadPartnerCalendar($month: Date!) {
         lastCompletedDay
         schedule(month: $month) {
@@ -71,20 +72,9 @@ export default class PartnerList extends Vue {
             lastName
           }
         }
-      }`;
-    const res = await fetch(import.meta.env.SNOWPACK_PUBLIC_API_BASE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          month: format(this.activeMonth, 'yyyy-MM-dd'),
-        },
-      }),
+      }`, {
+      month: dateToGqlDate(this.activeMonth),
     });
-    const { data } = await res.json();
     this.lastCompletedDay = new Date(data.lastCompletedDay);
     // Convert the date from UTC on the server to local time
     this.lastCompletedDay = addMinutes(this.lastCompletedDay, this.lastCompletedDay.getTimezoneOffset());
@@ -104,7 +94,7 @@ export default class PartnerList extends Vue {
       this.skippedDayIds.add(day.getDate() - 1);
     }
 
-    const query = `
+    const data = await query(`
       mutation SkipDay($day: Date!, $isSkipped: Boolean!) {
         skipDay(day: $day, isSkipped: $isSkipped) {
           partnersByDay {
@@ -112,21 +102,10 @@ export default class PartnerList extends Vue {
             lastName
           }
         }
-      }`;
-    const res = await fetch(import.meta.env.SNOWPACK_PUBLIC_API_BASE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          day: format(day, 'yyyy-MM-dd'),
-          isSkipped: !isSkipped,
-        },
-      }),
+      }`, {
+      day: dateToGqlDate(day),
+      isSkipped: !isSkipped,
     });
-    const { data } = await res.json();
     this.partnersByDay = data.skipDay.partnersByDay;
   }
 
@@ -137,21 +116,11 @@ export default class PartnerList extends Vue {
   private setLastCompletedDay(day: Date) {
     this.lastCompletedDay = day;
 
-    const query = `
+    query(`
       mutation CompleteDay($day: Date!) {
         completeDay(day: $day)
-      }`;
-    fetch(import.meta.env.SNOWPACK_PUBLIC_API_BASE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          day: format(this.lastCompletedDay, 'yyyy-MM-dd'),
-        },
-      }),
+      }`, {
+      day: dateToGqlDate(this.lastCompletedDay),
     });
   }
 
