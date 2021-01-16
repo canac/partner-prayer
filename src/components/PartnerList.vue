@@ -26,8 +26,8 @@
             </button>
           </div>
         </div>
-        <div class="partner" v-for="partner in getDayPartners(day)" :key="partner">
-          {{ partner }}
+        <div class="partner" v-for="partner in partnersByDay[day.getDate() - 1]" :key="partner._id">
+          {{ formatPartner(partner) }}
         </div>
       </div>
     </MonthCalendar>
@@ -38,13 +38,15 @@
 import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
-import { isBefore, startOfDay, subDays } from 'date-fns';
-import PartnerService from '../services/PartnerService';
-import { settingsServiceSingleton } from '../services/SettingsService';
+import { addMinutes, format, isBefore, startOfDay, startOfMonth, subDays } from 'date-fns';
 import MonthCalendar from './MonthCalendar.vue';
 import { Options, Vue } from 'vue-class-component';
 
-const partnerService: PartnerService = new PartnerService();
+type Partner = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+}
 
 @Options({
   components: {
@@ -52,38 +54,117 @@ const partnerService: PartnerService = new PartnerService();
   },
 })
 export default class PartnerList extends Vue {
-  activeMonth: Date = new Date();
+  activeMonth: Date = startOfMonth(new Date());
+  lastCompletedDay: Date = new Date(0);
+  skippedDayIds: Set<number> = new Set();
+  partnersByDay: Partner[][] = [];
 
-  get lastCompletedDay(): Date {
-    return settingsServiceSingleton.getSettings().lastCompletedDay;
+  async mounted() {
+    const query = `
+      query LoadPartnerCalendar($month: Date!) {
+        lastCompletedDay
+        schedule(month: $month) {
+          month
+          skippedDayIds
+          partnersByDay {
+            firstName
+            lastName
+          }
+        }
+      }`;
+    const res = await fetch(import.meta.env.SNOWPACK_PUBLIC_API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          month: format(this.activeMonth, 'yyyy-MM-dd'),
+        },
+      }),
+    });
+    const { data } = await res.json();
+    this.lastCompletedDay = new Date(data.lastCompletedDay);
+    // Convert the date from UTC on the server to local time
+    this.lastCompletedDay = addMinutes(this.lastCompletedDay, this.lastCompletedDay.getTimezoneOffset());
+    this.partnersByDay = data.schedule.partnersByDay;
+    this.skippedDayIds = new Set(data.schedule.skippedDayIds);
   }
 
   isDaySkipped(day: Date): boolean {
-    return partnerService.isDaySkipped(day);
+    return this.skippedDayIds.has(day.getDate() - 1);
   }
 
-  toggleDaySkipped(day: Date) {
-    partnerService.setDaySkipped(day, !this.isDaySkipped(day));
+  async toggleDaySkipped(day: Date) {
+    const isSkipped = this.isDaySkipped(day);
+    if (isSkipped) {
+      this.skippedDayIds.delete(day.getDate() - 1);
+    } else {
+      this.skippedDayIds.add(day.getDate() - 1);
+    }
+
+    const query = `
+      mutation SkipDay($day: Date!, $isSkipped: Boolean!) {
+        skipDay(day: $day, isSkipped: $isSkipped) {
+          partnersByDay {
+            firstName
+            lastName
+          }
+        }
+      }`;
+    const res = await fetch(import.meta.env.SNOWPACK_PUBLIC_API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          day: format(day, 'yyyy-MM-dd'),
+          isSkipped: !isSkipped,
+        },
+      }),
+    });
+    const { data } = await res.json();
+    this.partnersByDay = data.skipDay.partnersByDay;
   }
 
   isDayCompleted(day: Date): boolean {
     return !isBefore(this.lastCompletedDay, day);
   }
 
-  completeDay(day: Date) {
-    settingsServiceSingleton.setSettings({
-      lastCompletedDay: day,
+  private setLastCompletedDay(day: Date) {
+    this.lastCompletedDay = day;
+
+    const query = `
+      mutation CompleteDay($day: Date!) {
+        completeDay(day: $day)
+      }`;
+    fetch(import.meta.env.SNOWPACK_PUBLIC_API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          day: format(this.lastCompletedDay, 'yyyy-MM-dd'),
+        },
+      }),
     });
+  }
+
+  completeDay(day: Date) {
+    this.setLastCompletedDay(day);
   }
 
   uncompleteDay(day: Date) {
-    settingsServiceSingleton.setSettings({
-      lastCompletedDay: subDays(day, 1),
-    });
+    this.setLastCompletedDay(subDays(day, 1));
   }
 
-  getDayPartners(day: Date): string[] {
-    return partnerService.getPartnersForDay(day);
+  formatPartner(partner: Partner): string {
+    return `${partner.firstName} ${partner.lastName}`;
   }
 };
 </script>
