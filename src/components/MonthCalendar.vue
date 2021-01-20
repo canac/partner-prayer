@@ -13,7 +13,7 @@
       <div>Sa</div>
     </div>
     <div class="date-grid" :style="{ '--day-offset': dayOffset + 1 }">
-      <slot :day="day" v-for="day in days" :key="day.getDate()" />
+      <slot :day="day" :index="index" v-for="(day, index) in days" :key="day.getDate()" />
     </div>
   </div>
 </template>

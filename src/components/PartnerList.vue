@@ -1,32 +1,32 @@
 <template>
   <div class="partner-list">
-    <MonthCalendar :month="activeMonth" v-slot:default="{ day }">
-      <div class="day" :class="isDaySkipped(day) ? 'skipped' : (isDayCompleted(day) ? 'complete' : 'incomplete')">
+    <MonthCalendar :month="activeMonth" v-slot:default="{ day, index: dayId }">
+      <div class="day" :class="isDaySkipped(dayId) ? 'skipped' : (isDayCompleted(dayId) ? 'complete' : 'incomplete')">
         <div class="day-header">
           <div class="button-slot">
             <button
               class="toggle-active"
-              @click="toggleDaySkipped(day)">
-              <i class="fas fa-fw" :class="isDaySkipped(day) ? 'fa-eye' : 'fa-eye-slash'" />
+              @click="toggleDaySkipped(dayId)">
+              <i class="fas fa-fw" :class="isDaySkipped(dayId) ? 'fa-eye' : 'fa-eye-slash'" />
             </button>
           </div>
           <span class="day-title">{{ day.getDate() }}</span>
           <div class="button-slot">
             <button
               class="mark-complete"
-              @click="completeDay(day)"
-              v-if="!isDayCompleted(day) && !isDaySkipped(day)">
+              @click="completeDay(dayId)"
+              v-if="!isDayCompleted(dayId) && !isDaySkipped(dayId)">
               <i class="fas fa-fw fa-check" />
             </button>
             <button
               class="mark-incomplete"
-              @click="uncompleteDay(day)"
-              v-if="isDayCompleted(day) && !isDaySkipped(day)">
+              @click="uncompleteDay(dayId)"
+              v-if="isDayCompleted(dayId) && !isDaySkipped(dayId)">
               <i class="fas fa-fw fa-trash" />
             </button>
           </div>
         </div>
-        <div class="partner" v-for="partner in partnersByDay[day.getDate() - 1]" :key="partner._id">
+        <div class="partner" v-for="partner in partnersByDay[dayId]" :key="partner._id">
           {{ formatPartner(partner) }}
         </div>
       </div>
@@ -38,7 +38,7 @@
 import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
-import { addMinutes, isBefore, startOfDay, startOfMonth, subDays } from 'date-fns';
+import { startOfMonth } from 'date-fns';
 import { dateToGqlDate, query } from '../api/api';
 import MonthCalendar from './MonthCalendar.vue';
 import { Options, Vue } from 'vue-class-component';
@@ -56,17 +56,17 @@ type Partner = {
 })
 export default class PartnerList extends Vue {
   activeMonth: Date = startOfMonth(new Date());
-  lastCompletedDay: Date = new Date(0);
+  completedDays: number = 0;
   skippedDayIds: Set<number> = new Set();
   partnersByDay: Partner[][] = [];
 
   async mounted() {
     const data = await query(`
       query LoadPartnerCalendar($month: Date!) {
-        lastCompletedDay
         schedule(month: $month) {
           month
-          skippedDayIds
+          completedDays
+          skippedDays
           partnersByDay {
             firstName
             lastName
@@ -75,61 +75,71 @@ export default class PartnerList extends Vue {
       }`, {
       month: dateToGqlDate(this.activeMonth),
     });
-    this.lastCompletedDay = new Date(data.lastCompletedDay);
-    // Convert the date from UTC on the server to local time
-    this.lastCompletedDay = addMinutes(this.lastCompletedDay, this.lastCompletedDay.getTimezoneOffset());
+    this.completedDays = data.schedule.completedDays;
     this.partnersByDay = data.schedule.partnersByDay;
-    this.skippedDayIds = new Set(data.schedule.skippedDayIds);
+    this.skippedDayIds = new Set(data.schedule.skippedDays);
   }
 
-  isDaySkipped(day: Date): boolean {
-    return this.skippedDayIds.has(day.getDate() - 1);
+  isDaySkipped(dayId: number): boolean {
+    return this.skippedDayIds.has(dayId);
   }
 
-  async toggleDaySkipped(day: Date) {
-    const isSkipped = this.isDaySkipped(day);
+  async toggleDaySkipped(dayId: number) {
+    const isSkipped = this.isDaySkipped(dayId);
     if (isSkipped) {
-      this.skippedDayIds.delete(day.getDate() - 1);
+      this.skippedDayIds.delete(dayId);
     } else {
-      this.skippedDayIds.add(day.getDate() - 1);
+      this.skippedDayIds.add(dayId);
     }
 
     const data = await query(`
-      mutation SkipDay($day: Date!, $isSkipped: Boolean!) {
-        skipDay(day: $day, isSkipped: $isSkipped) {
+      mutation SkipDay($input: SkipDayInput!) {
+        skipDay(input: $input) {
           partnersByDay {
             firstName
             lastName
           }
         }
       }`, {
-      day: dateToGqlDate(day),
-      isSkipped: !isSkipped,
+      input: {
+        month: dateToGqlDate(this.activeMonth),
+        dayId,
+        isSkipped: !isSkipped,
+      },
     });
     this.partnersByDay = data.skipDay.partnersByDay;
   }
 
-  isDayCompleted(day: Date): boolean {
-    return !isBefore(this.lastCompletedDay, day);
+  isDayCompleted(dayId: number): boolean {
+    return dayId < this.completedDays;
   }
 
-  private setLastCompletedDay(day: Date) {
-    this.lastCompletedDay = day;
+  private async setLastCompletedDay(dayId: number) {
+    this.completedDays = dayId + 1;
 
-    query(`
-      mutation CompleteDay($day: Date!) {
-        completeDay(day: $day)
+    const data = await query(`
+      mutation CompleteDay($input: CompleteDayInput!) {
+        completeDay(input: $input) {
+          partnersByDay {
+            firstName
+            lastName
+          }
+        }
       }`, {
-      day: dateToGqlDate(this.lastCompletedDay),
+      input: {
+        month: dateToGqlDate(this.activeMonth),
+        completedDays: this.completedDays,
+      }
     });
+    this.partnersByDay = data.completeDay.partnersByDay;
   }
 
-  completeDay(day: Date) {
-    this.setLastCompletedDay(day);
+  completeDay(dayId: number) {
+    this.setLastCompletedDay(dayId);
   }
 
-  uncompleteDay(day: Date) {
-    this.setLastCompletedDay(subDays(day, 1));
+  uncompleteDay(dayId: number) {
+    this.setLastCompletedDay(dayId - 1);
   }
 
   formatPartner(partner: Partner): string {
