@@ -21,7 +21,7 @@
     "@snowpack/plugin-vue": "^2.2.6",
     "@types/snowpack-env": "^2.3.2",
     "dotenv": "^8.2.0",
-    "snowpack": "^2.18.2"
+    "snowpack": "^3.0.11"
   },
   "engines": {
     "node": ">=14.0.0"
