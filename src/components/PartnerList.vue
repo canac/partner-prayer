@@ -26,7 +26,7 @@
             </button>
           </div>
         </div>
-        <div class="partner" v-for="partner in partnersByDay[dayId]" :key="partner._id">
+        <div class="partner" v-for="partner in days[dayId]?.partners || []" :key="partner._id">
           {{ formatPartner(partner) }}
         </div>
       </div>
@@ -43,6 +43,12 @@ import { dateToGqlDate, query } from '../api/api';
 import MonthCalendar from './MonthCalendar.vue';
 import { Options, Vue } from 'vue-class-component';
 
+type Day = {
+  isSkipped: boolean;
+  dayId: number;
+  partners: Partner[];
+}
+
 type Partner = {
   _id: string;
   firstName: string;
@@ -56,28 +62,34 @@ type Partner = {
 })
 export default class PartnerList extends Vue {
   activeMonth: Date = startOfMonth(new Date());
+  scheduleId: string = '';
   completedDays: number = 0;
   skippedDayIds: Set<number> = new Set();
-  partnersByDay: Partner[][] = [];
+  days: Day[] = [];
 
   async mounted() {
     const data = await query(`
       query LoadPartnerCalendar($month: Date!) {
         schedule(month: $month) {
+          _id
           month
           completedDays
-          skippedDays
-          partnersByDay {
-            firstName
-            lastName
+          days {
+            isSkipped
+            dayId
+            partners {
+              firstName
+              lastName
+            }
           }
         }
       }`, {
       month: dateToGqlDate(this.activeMonth),
     });
+    this.scheduleId = data.schedule._id;
     this.completedDays = data.schedule.completedDays;
-    this.partnersByDay = data.schedule.partnersByDay;
-    this.skippedDayIds = new Set(data.schedule.skippedDays);
+    this.days = data.schedule.days;
+    this.skippedDayIds = new Set(this.days.filter(day => day.isSkipped).map(day => day.dayId));
   }
 
   isDaySkipped(dayId: number): boolean {
@@ -94,20 +106,22 @@ export default class PartnerList extends Vue {
 
     const data = await query(`
       mutation SkipDay($input: SkipDayInput!) {
-        skipDay(input: $input) {
-          partnersByDay {
-            firstName
-            lastName
+        schedule: skipDay(input: $input) {
+          days {
+            partners {
+              firstName
+              lastName
+            }
           }
         }
       }`, {
       input: {
-        month: dateToGqlDate(this.activeMonth),
+        scheduleId: this.scheduleId,
         dayId,
         isSkipped: !isSkipped,
       },
     });
-    this.partnersByDay = data.skipDay.partnersByDay;
+    this.days = data.schedule.days;
   }
 
   isDayCompleted(dayId: number): boolean {
@@ -119,19 +133,21 @@ export default class PartnerList extends Vue {
 
     const data = await query(`
       mutation CompleteDay($input: CompleteDayInput!) {
-        completeDay(input: $input) {
-          partnersByDay {
-            firstName
-            lastName
+        schedule: completeDay(input: $input) {
+          days {
+            partners {
+              firstName
+              lastName
+            }
           }
         }
       }`, {
       input: {
-        month: dateToGqlDate(this.activeMonth),
+        scheduleId: this.scheduleId,
         completedDays: this.completedDays,
       }
     });
-    this.partnersByDay = data.completeDay.partnersByDay;
+    this.days = data.schedule.days;
   }
 
   completeDay(dayId: number) {
