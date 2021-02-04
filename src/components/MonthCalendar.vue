@@ -20,16 +20,15 @@
 
 <script lang="ts">
 import { eachDayOfInterval, endOfMonth, format, getDay, startOfMonth } from 'date-fns';
-import { computed, toRefs } from 'vue';
+import { computed, PropType, toRefs } from 'vue';
 
 export default {
   props: {
-    month: Date,
+    month: Date as PropType<Date>,
   },
 
   setup(props) {
-    // Vue thinks that month should be a string not a Date for some reason
-    const { month } = toRefs(props as unknown as { month: Date });
+    const { month } = toRefs(props);
 
     const dayOffset = computed((): number => getDay(startOfMonth(month.value)));
     const monthTitle = computed((): string => format(month.value, 'MMMM yyyy'));
