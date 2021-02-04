@@ -38,10 +38,10 @@
 import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
+import { ref, onMounted, Ref } from 'vue';
 import { startOfMonth } from 'date-fns';
 import { dateToGqlDate, query } from '../api/api';
 import MonthCalendar from './MonthCalendar.vue';
-import { Options, Vue } from 'vue-class-component';
 
 type Day = {
   isSkipped: boolean;
@@ -50,118 +50,135 @@ type Day = {
 }
 
 type Partner = {
-  _id: string;
   firstName: string;
   lastName: string;
 }
 
-@Options({
-  components: {
-    MonthCalendar,
-  },
-})
-export default class PartnerList extends Vue {
-  activeMonth: Date = startOfMonth(new Date());
-  scheduleId: string = '';
-  completedDays: number = 0;
-  skippedDayIds: Set<number> = new Set();
-  days: Day[] = [];
+const activeMonth: Date = startOfMonth(new Date());
+const scheduleId: Ref<string> = ref('');
+const completedDays: Ref<number> = ref(0);
+const skippedDayIds: Ref<Set<number>> = ref(new Set());
+const days: Ref<Day[]> = ref([]);
 
-  async mounted() {
-    const data = await query(`
-      query LoadPartnerCalendar($month: Date!) {
-        schedule(month: $month) {
-          _id
-          month
-          completedDays
-          days {
-            isSkipped
-            dayId
-            partners {
-              firstName
-              lastName
-            }
+async function loadData() {
+  const data = await query(`
+    query LoadPartnerCalendar($month: Date!) {
+      schedule(month: $month) {
+        _id
+        completedDays
+        days {
+          isSkipped
+          dayId
+          partners {
+            firstName
+            lastName
           }
         }
-      }`, {
-      month: dateToGqlDate(this.activeMonth),
-    });
-    this.scheduleId = data.schedule._id;
-    this.completedDays = data.schedule.completedDays;
-    this.days = data.schedule.days;
-    this.skippedDayIds = new Set(this.days.filter(day => day.isSkipped).map(day => day.dayId));
-  }
-
-  isDaySkipped(dayId: number): boolean {
-    return this.skippedDayIds.has(dayId);
-  }
-
-  async toggleDaySkipped(dayId: number) {
-    const isSkipped = this.isDaySkipped(dayId);
-    if (isSkipped) {
-      this.skippedDayIds.delete(dayId);
-    } else {
-      this.skippedDayIds.add(dayId);
-    }
-
-    const data = await query(`
-      mutation SkipDay($input: SkipDayInput!) {
-        schedule: skipDay(input: $input) {
-          days {
-            partners {
-              firstName
-              lastName
-            }
-          }
-        }
-      }`, {
-      input: {
-        scheduleId: this.scheduleId,
-        dayId,
-        isSkipped: !isSkipped,
-      },
-    });
-    this.days = data.schedule.days;
-  }
-
-  isDayCompleted(dayId: number): boolean {
-    return dayId < this.completedDays;
-  }
-
-  private async setLastCompletedDay(dayId: number) {
-    this.completedDays = dayId + 1;
-
-    const data = await query(`
-      mutation CompleteDay($input: CompleteDayInput!) {
-        schedule: completeDay(input: $input) {
-          days {
-            partners {
-              firstName
-              lastName
-            }
-          }
-        }
-      }`, {
-      input: {
-        scheduleId: this.scheduleId,
-        completedDays: this.completedDays,
       }
-    });
-    this.days = data.schedule.days;
+    }`, {
+    month: dateToGqlDate(activeMonth),
+  });
+  scheduleId.value = data.schedule._id;
+  completedDays.value = data.schedule.completedDays;
+  days.value = data.schedule.days;
+  skippedDayIds.value = new Set(days.value.filter(day => day.isSkipped).map(day => day.dayId));
+}
+
+function isDaySkipped(dayId: number): boolean {
+  return skippedDayIds.value.has(dayId);
+}
+
+async function toggleDaySkipped(dayId: number) {
+  const isSkipped = isDaySkipped(dayId);
+  if (isSkipped) {
+    skippedDayIds.value.delete(dayId);
+  } else {
+    skippedDayIds.value.add(dayId);
   }
 
-  completeDay(dayId: number) {
-    this.setLastCompletedDay(dayId);
-  }
+  const data = await query(`
+    mutation SkipDay($input: SkipDayInput!) {
+      schedule: skipDay(input: $input) {
+        days {
+          partners {
+            firstName
+            lastName
+          }
+        }
+      }
+    }`, {
+    input: {
+      scheduleId: scheduleId.value,
+      dayId,
+      isSkipped: !isSkipped,
+    },
+  });
+  days.value = data.schedule.days;
+}
 
-  uncompleteDay(dayId: number) {
-    this.setLastCompletedDay(dayId - 1);
-  }
+function isDayCompleted(dayId: number): boolean {
+  return dayId < completedDays.value;
+}
 
-  formatPartner(partner: Partner): string {
-    return `${partner.firstName} ${partner.lastName}`;
+async function setLastCompletedDay(dayId: number) {
+  completedDays.value = dayId + 1;
+
+  const data = await query(`
+    mutation CompleteDay($input: CompleteDayInput!) {
+      schedule: completeDay(input: $input) {
+        days {
+          partners {
+            firstName
+            lastName
+          }
+        }
+      }
+    }`, {
+    input: {
+      scheduleId: scheduleId.value,
+      completedDays: completedDays.value,
+    }
+  });
+  days.value = data.schedule.days;
+}
+
+function completeDay(dayId: number) {
+  setLastCompletedDay(dayId);
+}
+
+function uncompleteDay(dayId: number) {
+  setLastCompletedDay(dayId - 1);
+}
+
+function formatPartner(partner: Partner): string {
+  return `${partner.firstName} ${partner.lastName}`;
+}
+
+export default {
+  components: { MonthCalendar },
+
+  setup() {
+    onMounted(() => loadData());
+
+    return {
+      activeMonth,
+      scheduleId,
+      completedDays,
+      skippedDayIds,
+      days,
+    };
+  },
+
+  methods: {
+    isDaySkipped,
+    toggleDaySkipped,
+    isDayCompleted,
+    setLastCompletedDay,
+    completeDay,
+    uncompleteDay,
+    formatPartner,
   }
-};
+}
 </script>
 
 <style scoped>
