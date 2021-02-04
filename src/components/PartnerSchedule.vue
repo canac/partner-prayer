@@ -1,5 +1,5 @@
 <template>
-  <div class="partner-list">
+  <div class="partner-schedule">
     <MonthCalendar :month="activeMonth" v-slot:default="{ index: dayId }" v-if="schedule">
       <ScheduleDay :schedule="schedule" :dayId="dayId" />
     </MonthCalendar>

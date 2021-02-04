@@ -1,14 +1,14 @@
 <template>
-  <PartnerList />
+  <PartnerSchedule />
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import PartnerList from './components/PartnerList.vue';
+import PartnerSchedule from './components/PartnerSchedule.vue';
 
 @Options({
   components: {
-    PartnerList,
+    PartnerSchedule,
   },
 })
 export default class App extends Vue {};
