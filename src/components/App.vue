@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import PartnerSchedule from './components/PartnerSchedule.vue';
+import PartnerSchedule from './PartnerSchedule.vue';
 
 export default {
   components: { PartnerSchedule },
