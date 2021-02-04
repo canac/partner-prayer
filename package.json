@@ -14,8 +14,7 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "date-fns": "^2.16.1",
     "express": "^4.17.1",
-    "vue": "^3.0.4",
-    "vue-class-component": "^8.0.0-rc.1"
+    "vue": "^3.0.4"
   },
   "devDependencies": {
     "@snowpack/plugin-vue": "^2.2.6",

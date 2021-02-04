@@ -20,29 +20,29 @@
 
 <script lang="ts">
 import { eachDayOfInterval, endOfMonth, format, getDay, startOfMonth } from 'date-fns';
-import { Vue, Options } from 'vue-class-component';
+import { computed, toRefs } from 'vue';
 
-@Options({
+export default {
   props: {
     month: Date,
   },
-})
-export default class MonthCalendar extends Vue {
-  month: Date;
 
-  get dayOffset(): number {
-    return getDay(startOfMonth(this.month));
-  }
+  setup(props) {
+    // Vue thinks that month should be a string not a Date for some reason
+    const { month } = toRefs(props as unknown as { month: Date });
 
-  get monthTitle(): string {
-    return format(this.month, 'MMMM yyyy')
-  }
+    const dayOffset = computed((): number => getDay(startOfMonth(month.value)));
+    const monthTitle = computed((): string => format(month.value, 'MMMM yyyy'));
+    const days = computed((): Date[] => eachDayOfInterval({
+      start: startOfMonth(month.value),
+      end: endOfMonth(month.value),
+    }));
 
-  get days(): Date[] {
-    return eachDayOfInterval({
-      start: startOfMonth(this.month),
-      end: endOfMonth(this.month)
-    });
+    return {
+      dayOffset,
+      monthTitle,
+      days,
+    };
   }
 };
 </script>
