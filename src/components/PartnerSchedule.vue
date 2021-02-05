@@ -10,7 +10,6 @@
 import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
-import { onMounted } from 'vue';
 import { startOfMonth } from 'date-fns';
 import useLoadSchedule from '../composables/useLoadSchedule';
 import MonthCalendar from './MonthCalendar.vue';
@@ -22,9 +21,7 @@ export default {
   components: { MonthCalendar, ScheduleDay },
 
   setup() {
-    const { schedule, loadSchedule } = useLoadSchedule(activeMonth);
-
-    onMounted(() => loadSchedule());
+    const { schedule } = useLoadSchedule(activeMonth);
 
     return {
       activeMonth,
