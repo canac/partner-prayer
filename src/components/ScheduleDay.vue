@@ -32,14 +32,20 @@
 
 <script lang="ts">
 import { Day, Partner, Schedule } from '../types';
-import { computed, toRefs } from 'vue';
+import { computed, PropType, toRefs } from 'vue';
 import useToggleDaySkipped from '../composables/useSkipDay';
 import useCompleteDay from '../composables/useCompleteDay';
 
 export default {
   props: {
-    schedule: Object,
-    dayId: Number,
+    schedule: {
+      type: Object as PropType<Schedule>,
+      required: true,
+    },
+    dayId: {
+      type: Number,
+      required: true,
+    },
   },
 
   setup(props: { schedule: Schedule, dayId: number }) {

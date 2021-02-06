@@ -22,7 +22,8 @@
   },
   "devDependencies": {
     "@snowpack/plugin-vue": "^2.2.6",
-    "@types/snowpack-env": "^2.3.2",
+    "@types/node": "^14.14.25",
+    "@types/snowpack-env": "^2.3.3",
     "dotenv": "^8.2.0",
     "snowpack": "^3.0.11"
   },

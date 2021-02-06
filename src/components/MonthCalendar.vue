@@ -24,7 +24,10 @@ import { computed, PropType, toRefs } from 'vue';
 
 export default {
   props: {
-    month: Date as PropType<Date>,
+    month: {
+      type: Date as PropType<Date>,
+      required: true,
+    },
   },
 
   setup(props) {
