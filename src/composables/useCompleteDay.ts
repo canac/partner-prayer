@@ -1,42 +1,51 @@
 import { Ref } from 'vue';
-import { query } from '../api/api';
+import { useMutation } from '@vue/apollo-composable';
+import gql from 'graphql-tag';
 import { Schedule } from '../types';
 
-export default function useCompleteDay({ schedule }: { schedule: Ref<Schedule | null> }) {
-  async function setLastCompletedDay(dayId: number) {
-    if (!schedule.value) {
-      return;
-    }
+type CompleteDayVars = {
+  input: {
+    scheduleId: string;
+    completedDays: number;
+  }
+}
 
-    schedule.value.completedDays = dayId + 1;
-
-    const data = await query(`
-      mutation CompleteDay($input: CompleteDayInput!) {
-        schedule: completeDay(input: $input) {
-          days {
-            dayId
-            isSkipped
-            partners {
-              _id
-              firstName
-              lastName
-            }
+export default function useCompleteDay({ schedule }: { schedule: Ref<Schedule> }) {
+  const { mutate } = useMutation<{ schedule: Schedule }, CompleteDayVars>(gql`
+    mutation CompleteDay($input: CompleteDayInput!) {
+      schedule: completeDay(input: $input) {
+        days {
+          dayId
+          isSkipped
+          partners {
+            _id
+            firstName
+            lastName
           }
         }
-      }`, {
+      }
+    }`
+  );
+
+  async function setLastCompletedDay(dayId: number): Promise<void> {
+    schedule.value.completedDays = dayId + 1;
+
+    const { data } = await mutate({
       input: {
         scheduleId: schedule.value._id,
         completedDays: schedule.value.completedDays,
-      }
+      },
     });
-    schedule.value.days = data.schedule.days;
+    if (data?.schedule) {
+      schedule.value.days = data.schedule.days;
+    }
   }
 
   function completeDay(dayId: number): Promise<void> {
     return setLastCompletedDay(dayId);
   }
 
-  function uncompleteDay(dayId: number) {
+  function uncompleteDay(dayId: number): Promise<void> {
     return setLastCompletedDay(dayId - 1);
   }
 

@@ -51,18 +51,18 @@ export default {
   setup(props: { schedule: Schedule, dayId: number }) {
     const { schedule, dayId } = toRefs(props);
     const day = computed((): Day | null => schedule.value.days[dayId.value] || null);
-    const isSkipped = computed((): boolean => day.value.isSkipped);
-    const isComplete = computed((): boolean => day.value.dayId < schedule.value.completedDays);
-    const { toggleDaySkipped } = useToggleDaySkipped({ schedule })
-    const { completeDay, uncompleteDay } = useCompleteDay({ schedule })
+    const isSkipped = computed((): boolean => day.value?.isSkipped ?? false);
+    const isComplete = computed((): boolean => schedule.value.completedDays > (day.value?.dayId ?? 0));
+    const { toggleDaySkipped } = useToggleDaySkipped({ schedule });
+    const { completeDay, uncompleteDay } = useCompleteDay({ schedule });
 
     return {
       day,
       isSkipped,
       isComplete,
-      toggleDaySkipped() { toggleDaySkipped(dayId.value) },
-      completeDay() { completeDay(dayId.value) },
-      uncompleteDay() { uncompleteDay(dayId.value) },
+      toggleDaySkipped() { toggleDaySkipped(dayId.value); },
+      completeDay() { completeDay(dayId.value); },
+      uncompleteDay() { uncompleteDay(dayId.value); },
     };
   },
 
