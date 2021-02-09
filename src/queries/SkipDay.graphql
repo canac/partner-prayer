@@ -1,0 +1,13 @@
+mutation SkipDay($input: SkipDayInput!) {
+  schedule: skipDay(input: $input) {
+    _id
+    completedDays
+    days {
+      _id
+      isSkipped
+      partners {
+        _id
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+mutation CompleteDay($input: CompleteDayInput!) {
+  schedule: completeDay(input: $input) {
+    _id
+    completedDays
+    days {
+      _id
+      partners {
+        _id
+      }
+    }
+  }
+}

@@ -6,9 +6,11 @@
   "license": "MIT",
   "main": "server/app.mjs",
   "scripts": {
-    "start": "node .",
+    "build": "snowpack build",
     "dev": "snowpack dev",
-    "build": "snowpack build"
+    "gql-codegen": "graphql-codegen --config codegen.yml",
+    "gql-codegen-watch": "graphql-codegen --config codegen.yml --watch",
+    "start": "node ."
   },
   "dependencies": {
     "@apollo/client": "^3.3.8",
@@ -21,6 +23,10 @@
     "vue": "^3.0.4"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.20.1",
+    "@graphql-codegen/typescript": "1.20.2",
+    "@graphql-codegen/typescript-operations": "1.17.14",
+    "@graphql-codegen/typescript-vue-apollo": "^2.3.1",
     "@snowpack/plugin-vue": "^2.2.6",
     "@types/node": "^14.14.25",
     "@types/snowpack-env": "^2.3.3",

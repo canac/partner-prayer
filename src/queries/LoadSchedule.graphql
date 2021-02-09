@@ -1,0 +1,14 @@
+query LoadSchedule($month: Date!) {
+  schedule(month: $month) {
+    _id
+    completedDays
+    days {
+      isSkipped
+      dayId
+      partners {
+        firstName
+        lastName
+      }
+    }
+  }
+}

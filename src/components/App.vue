@@ -12,7 +12,17 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core
 const httpLink = createHttpLink({
   uri: import.meta.env.SNOWPACK_PUBLIC_API_BASE,
 });
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  typePolicies: {
+    ScheduleDay: {
+      fields: {
+        partners: {
+          merge: false,
+        },
+      },
+    },
+  },
+});
 const apolloClient = new ApolloClient({
   link: httpLink,
   cache,
