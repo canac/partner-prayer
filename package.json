@@ -10,6 +10,9 @@
     "dev": "snowpack dev",
     "gql-codegen": "graphql-codegen --config codegen.yml",
     "gql-codegen-watch": "graphql-codegen --config codegen.yml --watch",
+    "lint": "npm run lint:ts && npm run lint:css",
+    "lint:ts": "eslint .",
+    "lint:css": "stylelint src/components/*.vue",
     "start": "node ."
   },
   "dependencies": {
@@ -17,6 +20,7 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "@vue/apollo-composable": "^4.0.0-alpha.12",
     "date-fns": "^2.16.1",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
@@ -30,8 +34,15 @@
     "@snowpack/plugin-vue": "^2.2.6",
     "@types/node": "^14.14.25",
     "@types/snowpack-env": "^2.3.3",
-    "dotenv": "^8.2.0",
-    "snowpack": "^3.0.11"
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-vue": "^7.5.0",
+    "snowpack": "^3.0.11",
+    "stylelint": "^13.9.0",
+    "stylelint-config-idiomatic-order": "^8.1.0"
   },
   "engines": {
     "node": ">=14.0.0"

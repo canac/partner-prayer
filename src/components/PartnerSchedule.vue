@@ -1,7 +1,14 @@
 <template>
   <div class="partner-schedule">
-    <MonthCalendar :month="activeMonth" v-slot:default="{ index: dayId }" v-if="schedule">
-      <ScheduleDay :schedule="schedule" :dayId="dayId" />
+    <MonthCalendar
+      v-if="schedule"
+      v-slot="{ index: dayId }"
+      :month="activeMonth"
+    >
+      <ScheduleDay
+        :schedule="schedule"
+        :day-id="dayId"
+      />
     </MonthCalendar>
   </div>
 </template>
@@ -20,6 +27,7 @@ const activeMonth: Date = startOfMonth(new Date());
 export default {
   components: { MonthCalendar, ScheduleDay },
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   setup() {
     const { schedule } = useLoadSchedule(activeMonth);
 
@@ -28,5 +36,5 @@ export default {
       schedule,
     };
   },
-}
+};
 </script>

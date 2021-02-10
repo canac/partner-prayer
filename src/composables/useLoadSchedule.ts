@@ -1,10 +1,14 @@
 import { useResult } from '@vue/apollo-composable';
-import { dateToGqlDate } from '../api/api';
+import { format } from 'date-fns';
+import { Ref } from 'vue';
 import { LoadScheduleQuery, useLoadScheduleQuery } from '../generated/graphql';
+import { Schedule } from '../types';
 
-export default function useLoadSchedule(month: Date) {
-  const { result } = useLoadScheduleQuery( {
-    month: dateToGqlDate(month),
+export default function useLoadSchedule(month: Date): {
+  schedule: Ref<Schedule | null | undefined>,
+} {
+  const { result } = useLoadScheduleQuery({
+    month: format(month, 'yyyy-MM-dd'),
   });
 
   const schedule = useResult<LoadScheduleQuery, 'schedule'>(result);

@@ -1,7 +1,6 @@
-export interface Schedule {
-  _id: string;
-  completedDays: number;
-  days: Day[];
+export interface Partner {
+  firstName: string;
+  lastName: string;
 }
 
 export interface Day {
@@ -10,7 +9,8 @@ export interface Day {
   partners: Partner[];
 }
 
-export interface Partner {
-  firstName: string;
-  lastName: string;
+export interface Schedule {
+  _id: string;
+  completedDays: number;
+  days: Day[];
 }

@@ -12,15 +12,25 @@
       <div>Fr</div>
       <div>Sa</div>
     </div>
-    <div class="date-grid" :style="{ '--day-offset': dayOffset + 1 }">
-      <slot :day="day" :index="index" v-for="(day, index) in days" :key="day.getDate()" />
+    <div
+      class="date-grid"
+      :style="{ '--day-offset': dayOffset + 1 }"
+    >
+      <slot
+        v-for="(day, index) in days"
+        :key="day.getDate()"
+        :day="day"
+        :index="index"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { eachDayOfInterval, endOfMonth, format, getDay, startOfMonth } from 'date-fns';
-import { computed, PropType, toRefs } from 'vue';
+import {
+  eachDayOfInterval, endOfMonth, format, getDay, startOfMonth,
+} from 'date-fns';
+import { PropType, computed, toRefs } from 'vue';
 
 export default {
   props: {
@@ -30,7 +40,8 @@ export default {
     },
   },
 
-  setup(props) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  setup(props: { month: Date }) {
     const { month } = toRefs(props);
 
     const dayOffset = computed((): number => getDay(startOfMonth(month.value)));
@@ -45,7 +56,7 @@ export default {
       monthTitle,
       days,
     };
-  }
+  },
 };
 </script>
 
@@ -55,22 +66,22 @@ export default {
 }
 
 .month-title {
+  padding-bottom: 0.5em;
   font-size: 1.5em;
   text-align: center;
-  padding-bottom: 0.5em;
 }
 
 .weekday-titles {
+  padding-bottom: 0.5em;
   color: #666666;
   text-align: center;
-  padding-bottom: 0.5em;
 }
 
 .weekday-titles, .date-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
   grid-auto-rows: 1fr;
   grid-gap: 2px;
+  grid-template-columns: repeat(7, 1fr);
 }
 
 .date-grid :first-child {

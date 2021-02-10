@@ -3,14 +3,14 @@
 </template>
 
 <script lang="ts">
-import PartnerSchedule from './PartnerSchedule.vue';
-import { provide } from 'vue';
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import { DefaultApolloClient } from '@vue/apollo-composable';
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core';
+import { provide } from 'vue';
+import PartnerSchedule from './PartnerSchedule.vue';
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
-  uri: import.meta.env.SNOWPACK_PUBLIC_API_BASE,
+  uri: import.meta.env.SNOWPACK_PUBLIC_API_BASE as string,
 });
 const cache = new InMemoryCache({
   typePolicies: {
@@ -31,7 +31,7 @@ const apolloClient = new ApolloClient({
 export default {
   components: { PartnerSchedule },
 
-  setup() {
+  setup(): void {
     provide(DefaultApolloClient, apolloClient);
   },
 };

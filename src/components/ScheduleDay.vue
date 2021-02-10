@@ -1,40 +1,53 @@
 <template>
-  <div class="schedule-day" :class="isSkipped ? 'skipped' : (isComplete ? 'complete' : 'incomplete')">
+  <div
+    class="schedule-day"
+    :class="isSkipped ? 'skipped' : (isComplete ? 'complete' : 'incomplete')"
+  >
     <div class="day-header">
       <div class="button-slot">
         <button
           class="toggle-active"
-          @click="toggleDaySkipped()">
-          <i class="fas fa-fw" :class="isSkipped ? 'fa-eye' : 'fa-eye-slash'" />
+          @click="toggleDaySkipped()"
+        >
+          <i
+            class="fas fa-fw"
+            :class="isSkipped ? 'fa-eye' : 'fa-eye-slash'"
+          />
         </button>
       </div>
       <span class="day-title">{{ day.dayId + 1 }}</span>
       <div class="button-slot">
         <button
+          v-if="!isComplete && !isSkipped"
           class="mark-complete"
           @click="completeDay()"
-          v-if="!isComplete && !isSkipped">
+        >
           <i class="fas fa-fw fa-check" />
         </button>
         <button
+          v-if="isComplete && !isSkipped"
           class="mark-incomplete"
           @click="uncompleteDay()"
-          v-if="isComplete && !isSkipped">
+        >
           <i class="fas fa-fw fa-trash" />
         </button>
       </div>
     </div>
-    <div class="partner" v-for="partner in day.partners" :key="partner._id">
+    <div
+      v-for="partner in day.partners"
+      :key="partner._id"
+      class="partner"
+    >
       {{ formatPartner(partner) }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Day, Partner, Schedule } from '../types';
-import { computed, PropType, toRefs } from 'vue';
-import useToggleDaySkipped from '../composables/useSkipDay';
+import { PropType, computed, toRefs } from 'vue';
 import useCompleteDay from '../composables/useCompleteDay';
+import useToggleDaySkipped from '../composables/useSkipDay';
+import { Day, Partner, Schedule } from '../types';
 
 export default {
   props: {
@@ -48,6 +61,7 @@ export default {
     },
   },
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   setup(props: { schedule: Schedule, dayId: number }) {
     const { schedule, dayId } = toRefs(props);
     const day = computed((): Day | null => schedule.value.days[dayId.value] || null);
@@ -60,9 +74,9 @@ export default {
       day,
       isSkipped,
       isComplete,
-      toggleDaySkipped() { toggleDaySkipped(dayId.value); },
-      completeDay() { completeDay(dayId.value); },
-      uncompleteDay() { uncompleteDay(dayId.value); },
+      toggleDaySkipped: () => toggleDaySkipped(dayId.value),
+      completeDay: () => completeDay(dayId.value),
+      uncompleteDay: () => uncompleteDay(dayId.value),
     };
   },
 
@@ -70,7 +84,7 @@ export default {
     formatPartner(partner: Partner): string {
       return `${partner.firstName} ${partner.lastName}`;
     },
-  }
+  },
 };
 </script>
 
@@ -80,8 +94,8 @@ export default {
 }
 
 .day-header {
-  padding-bottom: 0.25em;
   display: flex;
+  padding-bottom: 0.25em;
   font-size: var(--icon-font-size);
 }
 
