@@ -24,7 +24,6 @@ module.exports = {
       extraFileExtensions: ['.vue'],
     },
     rules: {
-      '@typescript-eslint/explicit-module-boundary-types': ['warn', { allowedNames: ['setup'] }],
       'import/extensions': 0,
       'import/no-unresolved': 0,
       'import/order': ['error', { alphabetize: { order: 'asc' } }],

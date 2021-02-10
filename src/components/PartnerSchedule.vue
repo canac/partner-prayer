@@ -18,16 +18,16 @@ import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
 
 import { startOfMonth } from 'date-fns';
+import { defineComponent } from 'vue';
 import useLoadSchedule from '../composables/useLoadSchedule';
 import MonthCalendar from './MonthCalendar.vue';
 import ScheduleDay from './ScheduleDay.vue';
 
 const activeMonth: Date = startOfMonth(new Date());
 
-export default {
+export default defineComponent({
   components: { MonthCalendar, ScheduleDay },
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   setup() {
     const { schedule } = useLoadSchedule(activeMonth);
 
@@ -36,5 +36,5 @@ export default {
       schedule,
     };
   },
-};
+});
 </script>

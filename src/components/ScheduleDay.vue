@@ -44,12 +44,14 @@
 </template>
 
 <script lang="ts">
-import { PropType, computed, toRefs } from 'vue';
+import {
+  PropType, computed, defineComponent, toRefs,
+} from 'vue';
 import useCompleteDay from '../composables/useCompleteDay';
 import useToggleDaySkipped from '../composables/useSkipDay';
 import { Day, Partner, Schedule } from '../types';
 
-export default {
+export default defineComponent({
   props: {
     schedule: {
       type: Object as PropType<Schedule>,
@@ -61,8 +63,7 @@ export default {
     },
   },
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  setup(props: { schedule: Schedule, dayId: number }) {
+  setup(props) {
     const { schedule, dayId } = toRefs(props);
     const day = computed((): Day | null => schedule.value.days[dayId.value] || null);
     const isSkipped = computed((): boolean => day.value?.isSkipped ?? false);
@@ -85,7 +86,7 @@ export default {
       return `${partner.firstName} ${partner.lastName}`;
     },
   },
-};
+});
 </script>
 
 <style scoped>

@@ -30,9 +30,11 @@
 import {
   eachDayOfInterval, endOfMonth, format, getDay, startOfMonth,
 } from 'date-fns';
-import { PropType, computed, toRefs } from 'vue';
+import {
+  PropType, computed, defineComponent, toRefs,
+} from 'vue';
 
-export default {
+export default defineComponent({
   props: {
     month: {
       type: Date as PropType<Date>,
@@ -40,8 +42,7 @@ export default {
     },
   },
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  setup(props: { month: Date }) {
+  setup(props) {
     const { month } = toRefs(props);
 
     const dayOffset = computed((): number => getDay(startOfMonth(month.value)));
@@ -57,7 +58,7 @@ export default {
       days,
     };
   },
-};
+});
 </script>
 
 <style scoped>

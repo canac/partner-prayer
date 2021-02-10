@@ -5,7 +5,7 @@
 <script lang="ts">
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import { DefaultApolloClient } from '@vue/apollo-composable';
-import { provide } from 'vue';
+import { defineComponent, provide } from 'vue';
 import PartnerSchedule from './PartnerSchedule.vue';
 
 // HTTP connection to the API
@@ -28,11 +28,11 @@ const apolloClient = new ApolloClient({
   cache,
 });
 
-export default {
+export default defineComponent({
   components: { PartnerSchedule },
 
-  setup(): void {
+  setup() {
     provide(DefaultApolloClient, apolloClient);
   },
-};
+});
 </script>
