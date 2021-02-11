@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="day"
     class="schedule-day"
     :class="isSkipped ? 'skipped' : (isComplete ? 'complete' : 'incomplete')"
   >

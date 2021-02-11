@@ -1,11 +1,13 @@
 export interface Partner {
+  _id: string;
   firstName: string;
   lastName: string;
 }
 
 export interface Day {
-  isSkipped: boolean;
+  _id: string;
   dayId: number;
+  isSkipped: boolean;
   partners: Partner[];
 }
 
