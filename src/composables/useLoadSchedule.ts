@@ -5,7 +5,7 @@ import { LoadScheduleQuery, useLoadScheduleQuery } from '../generated/graphql';
 import { Schedule } from '../types';
 
 export default function useLoadSchedule(month: Date): {
-  schedule: Ref<Schedule | null | undefined>,
+  schedule: Ref<Schedule | undefined>,
 } {
   const { result } = useLoadScheduleQuery({
     month: format(month, 'yyyy-MM-dd'),

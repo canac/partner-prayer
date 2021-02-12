@@ -34,11 +34,20 @@ export type AdditionalEntityFields = {
 };
 
 
+export type PartnerRequest = {
+  __typename?: 'PartnerRequest';
+  _id: Scalars['ID'];
+  partner: Partner;
+  createdAt: Scalars['Date'];
+  request: Scalars['String'];
+};
+
 export type Partner = {
   __typename?: 'Partner';
   _id: Scalars['ID'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  requests: Array<PartnerRequest>;
 };
 
 export type ScheduleDay = {
@@ -60,13 +69,27 @@ export type Schedule = {
 
 export type Query = {
   __typename?: 'Query';
-  partners?: Maybe<Array<Maybe<Partner>>>;
-  schedule?: Maybe<Schedule>;
+  partners: Array<Partner>;
+  schedule: Schedule;
 };
 
 
 export type QueryScheduleArgs = {
   month: Scalars['Date'];
+};
+
+export type CreatePartnerRequestInput = {
+  partnerId: Scalars['String'];
+  request: Scalars['String'];
+};
+
+export type DeletePartnerRequestInput = {
+  partnerRequestId: Scalars['String'];
+};
+
+export type DeletePartnerRequestPayload = {
+  __typename?: 'DeletePartnerRequestPayload';
+  partnerRequestId: Scalars['String'];
 };
 
 export type CompleteDayInput = {
@@ -82,8 +105,20 @@ export type SkipDayInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  completeDay?: Maybe<Schedule>;
-  skipDay?: Maybe<Schedule>;
+  createPartnerRequest: PartnerRequest;
+  deletePartnerRequest: DeletePartnerRequestPayload;
+  completeDay: Schedule;
+  skipDay: Schedule;
+};
+
+
+export type MutationCreatePartnerRequestArgs = {
+  input: CreatePartnerRequestInput;
+};
+
+
+export type MutationDeletePartnerRequestArgs = {
+  input: DeletePartnerRequestInput;
 };
 
 
@@ -109,7 +144,7 @@ export type CompleteDayMutationVariables = Exact<{
 
 export type CompleteDayMutation = (
   { __typename?: 'Mutation' }
-  & { schedule?: Maybe<(
+  & { schedule: (
     { __typename?: 'Schedule' }
     & Pick<Schedule, '_id' | 'completedDays'>
     & { days: Array<(
@@ -120,7 +155,7 @@ export type CompleteDayMutation = (
         & Pick<Partner, '_id'>
       )> }
     )> }
-  )> }
+  ) }
 );
 
 export type LoadScheduleQueryVariables = Exact<{
@@ -130,18 +165,18 @@ export type LoadScheduleQueryVariables = Exact<{
 
 export type LoadScheduleQuery = (
   { __typename?: 'Query' }
-  & { schedule?: Maybe<(
+  & { schedule: (
     { __typename?: 'Schedule' }
     & Pick<Schedule, '_id' | 'completedDays'>
     & { days: Array<(
       { __typename?: 'ScheduleDay' }
-      & Pick<ScheduleDay, 'isSkipped' | 'dayId'>
+      & Pick<ScheduleDay, '_id' | 'isSkipped' | 'dayId'>
       & { partners: Array<(
         { __typename?: 'Partner' }
-        & Pick<Partner, 'firstName' | 'lastName'>
+        & Pick<Partner, '_id' | 'firstName' | 'lastName'>
       )> }
     )> }
-  )> }
+  ) }
 );
 
 export type SkipDayMutationVariables = Exact<{
@@ -151,7 +186,7 @@ export type SkipDayMutationVariables = Exact<{
 
 export type SkipDayMutation = (
   { __typename?: 'Mutation' }
-  & { schedule?: Maybe<(
+  & { schedule: (
     { __typename?: 'Schedule' }
     & Pick<Schedule, '_id' | 'completedDays'>
     & { days: Array<(
@@ -162,7 +197,7 @@ export type SkipDayMutation = (
         & Pick<Partner, '_id'>
       )> }
     )> }
-  )> }
+  ) }
 );
 
 
@@ -208,9 +243,11 @@ export const LoadScheduleDocument = gql`
     _id
     completedDays
     days {
+      _id
       isSkipped
       dayId
       partners {
+        _id
         firstName
         lastName
       }

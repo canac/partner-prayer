@@ -3,9 +3,11 @@ query LoadSchedule($month: Date!) {
     _id
     completedDays
     days {
+      _id
       isSkipped
       dayId
       partners {
+        _id
         firstName
         lastName
       }
