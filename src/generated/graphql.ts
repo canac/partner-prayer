@@ -47,6 +47,7 @@ export type Partner = {
   _id: Scalars['ID'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  fullName: Scalars['String'];
   requests: Array<PartnerRequest>;
 };
 
@@ -173,7 +174,7 @@ export type LoadScheduleQuery = (
       & Pick<ScheduleDay, '_id' | 'isSkipped' | 'dayId'>
       & { partners: Array<(
         { __typename?: 'Partner' }
-        & Pick<Partner, '_id' | 'firstName' | 'lastName'>
+        & Pick<Partner, '_id' | 'fullName'>
       )> }
     )> }
   ) }
@@ -248,8 +249,7 @@ export const LoadScheduleDocument = gql`
       dayId
       partners {
         _id
-        firstName
-        lastName
+        fullName
       }
     }
   }

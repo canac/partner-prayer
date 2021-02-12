@@ -8,8 +8,7 @@ query LoadSchedule($month: Date!) {
       dayId
       partners {
         _id
-        firstName
-        lastName
+        fullName
       }
     }
   }

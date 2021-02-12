@@ -39,7 +39,7 @@
       :key="partner._id"
       class="partner"
     >
-      {{ formatPartner(partner) }}
+      {{ partner.fullName }}
     </div>
   </div>
 </template>
@@ -50,7 +50,7 @@ import {
 } from 'vue';
 import useCompleteDay from '../composables/useCompleteDay';
 import useToggleDaySkipped from '../composables/useSkipDay';
-import { Day, Partner, Schedule } from '../types';
+import { Day, Schedule } from '../types';
 
 export default defineComponent({
   props: {
@@ -80,12 +80,6 @@ export default defineComponent({
       completeDay: () => completeDay(dayId.value),
       uncompleteDay: () => uncompleteDay(dayId.value),
     };
-  },
-
-  methods: {
-    formatPartner(partner: Partner): string {
-      return `${partner.firstName} ${partner.lastName}`;
-    },
   },
 });
 </script>

@@ -1,7 +1,6 @@
 export interface Partner {
   _id: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface Day {
