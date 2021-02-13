@@ -159,6 +159,19 @@ export type CompleteDayMutation = (
   ) }
 );
 
+export type DeletePartnerRequestMutationVariables = Exact<{
+  input: DeletePartnerRequestInput;
+}>;
+
+
+export type DeletePartnerRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { deletePartnerRequest: (
+    { __typename?: 'DeletePartnerRequestPayload' }
+    & Pick<DeletePartnerRequestPayload, 'partnerRequestId'>
+  ) }
+);
+
 export type LoadScheduleQueryVariables = Exact<{
   month: Scalars['Date'];
 }>;
@@ -175,9 +188,21 @@ export type LoadScheduleQuery = (
       & { partners: Array<(
         { __typename?: 'Partner' }
         & Pick<Partner, '_id' | 'fullName'>
+        & { requests: Array<(
+          { __typename?: 'PartnerRequest' }
+          & Pick<PartnerRequest, '_id' | 'createdAt' | 'request'>
+        )> }
       )> }
     )> }
   ) }
+);
+
+export type PartnerRequestsFragment = (
+  { __typename?: 'Partner' }
+  & { requests: Array<(
+    { __typename?: 'PartnerRequest' }
+    & Pick<PartnerRequest, '_id'>
+  )> }
 );
 
 export type SkipDayMutationVariables = Exact<{
@@ -201,7 +226,13 @@ export type SkipDayMutation = (
   ) }
 );
 
-
+export const PartnerRequestsFragmentDoc = gql`
+    fragment PartnerRequests on Partner {
+  requests {
+    _id
+  }
+}
+    `;
 export const CompleteDayDocument = gql`
     mutation CompleteDay($input: CompleteDayInput!) {
   schedule: completeDay(input: $input) {
@@ -238,6 +269,35 @@ export function useCompleteDayMutation(options: VueApolloComposable.UseMutationO
   return VueApolloComposable.useMutation<CompleteDayMutation, CompleteDayMutationVariables>(CompleteDayDocument, options);
 }
 export type CompleteDayMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<CompleteDayMutation, CompleteDayMutationVariables>;
+export const DeletePartnerRequestDocument = gql`
+    mutation DeletePartnerRequest($input: DeletePartnerRequestInput!) {
+  deletePartnerRequest(input: $input) {
+    partnerRequestId
+  }
+}
+    `;
+
+/**
+ * __useDeletePartnerRequestMutation__
+ *
+ * To run a mutation, you first call `useDeletePartnerRequestMutation` within a Vue component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePartnerRequestMutation` returns an object that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - Several other properties: https://v4.apollo.vuejs.org/api/use-mutation.html#return
+ *
+ * @param options that will be passed into the mutation, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/mutation.html#options;
+ *
+ * @example
+ * const { mutate, loading, error, onDone } = useDeletePartnerRequestMutation({
+ *   variables: {
+ *     input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeletePartnerRequestMutation(options: VueApolloComposable.UseMutationOptions<DeletePartnerRequestMutation, DeletePartnerRequestMutationVariables> | ReactiveFunction<VueApolloComposable.UseMutationOptions<DeletePartnerRequestMutation, DeletePartnerRequestMutationVariables>>) {
+  return VueApolloComposable.useMutation<DeletePartnerRequestMutation, DeletePartnerRequestMutationVariables>(DeletePartnerRequestDocument, options);
+}
+export type DeletePartnerRequestMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<DeletePartnerRequestMutation, DeletePartnerRequestMutationVariables>;
 export const LoadScheduleDocument = gql`
     query LoadSchedule($month: Date!) {
   schedule(month: $month) {
@@ -250,6 +310,11 @@ export const LoadScheduleDocument = gql`
       partners {
         _id
         fullName
+        requests {
+          _id
+          createdAt
+          request
+        }
       }
     }
   }

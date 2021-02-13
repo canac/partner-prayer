@@ -14,9 +14,6 @@
 </template>
 
 <script lang="ts">
-import '@fortawesome/fontawesome-free/css/solid.css';
-import '@fortawesome/fontawesome-free/css/fontawesome.css';
-
 import { startOfMonth } from 'date-fns';
 import { defineComponent } from 'vue';
 import useLoadSchedule from '../composables/useLoadSchedule';

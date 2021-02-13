@@ -8,6 +8,9 @@ import { DefaultApolloClient } from '@vue/apollo-composable';
 import { defineComponent, provide } from 'vue';
 import PartnerSchedule from './PartnerSchedule.vue';
 
+import '@fortawesome/fontawesome-free/css/solid.css';
+import '@fortawesome/fontawesome-free/css/fontawesome.css';
+
 // HTTP connection to the API
 const httpLink = createHttpLink({
   uri: import.meta.env.SNOWPACK_PUBLIC_API_BASE as string,

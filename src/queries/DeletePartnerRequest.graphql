@@ -1,0 +1,5 @@
+mutation DeletePartnerRequest($input: DeletePartnerRequestInput!) {
+  deletePartnerRequest(input: $input) {
+    partnerRequestId
+  }
+}

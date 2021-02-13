@@ -9,6 +9,11 @@ query LoadSchedule($month: Date!) {
       partners {
         _id
         fullName
+        requests {
+          _id
+          createdAt
+          request
+        }
       }
     }
   }

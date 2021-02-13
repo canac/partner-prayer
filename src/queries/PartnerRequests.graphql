@@ -1,0 +1,5 @@
+fragment PartnerRequests on Partner {
+  requests {
+    _id
+  }
+}
