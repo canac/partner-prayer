@@ -14,12 +14,22 @@
         @click="deleteRequest(request)"
       />
     </div>
+    <form @submit.prevent="createRequest(newRequest)">
+      <input
+        v-model="newRequest"
+        placeholder="Prayer request"
+      >
+      <button type="submit">
+        Create
+      </button>
+    </form>
   </div>
 </template>
 
 <script lang="ts">
 import { format } from 'date-fns';
-import { PropType, defineComponent } from 'vue';
+import { PropType, defineComponent, ref } from 'vue';
+import useCreatePartnerRequest from '../composables/useCreatePartnerRequest';
 import useDeletePartnerRequest from '../composables/useDeletePartnerRequest';
 import { Partner, PartnerRequest } from '../types';
 
@@ -31,10 +41,21 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props) {
+    const newRequest = ref('');
+
+    const { createPartnerRequest } = useCreatePartnerRequest();
     const { deletePartnerRequest } = useDeletePartnerRequest();
 
+    // Create a new partner request on the partner using the information in the form
+    async function createRequest() {
+      await createPartnerRequest(props.partner._id, newRequest.value);
+      newRequest.value = '';
+    }
+
     return {
+      newRequest,
+      createRequest,
       deleteRequest: deletePartnerRequest,
     };
   },

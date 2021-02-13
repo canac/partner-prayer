@@ -1,0 +1,7 @@
+mutation CreatePartnerRequest($input: CreatePartnerRequestInput!) {
+  createPartnerRequest(input: $input) {
+    _id
+    createdAt
+    request
+  }
+}

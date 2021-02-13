@@ -159,6 +159,19 @@ export type CompleteDayMutation = (
   ) }
 );
 
+export type CreatePartnerRequestMutationVariables = Exact<{
+  input: CreatePartnerRequestInput;
+}>;
+
+
+export type CreatePartnerRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { createPartnerRequest: (
+    { __typename?: 'PartnerRequest' }
+    & Pick<PartnerRequest, '_id' | 'createdAt' | 'request'>
+  ) }
+);
+
 export type DeletePartnerRequestMutationVariables = Exact<{
   input: DeletePartnerRequestInput;
 }>;
@@ -269,6 +282,37 @@ export function useCompleteDayMutation(options: VueApolloComposable.UseMutationO
   return VueApolloComposable.useMutation<CompleteDayMutation, CompleteDayMutationVariables>(CompleteDayDocument, options);
 }
 export type CompleteDayMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<CompleteDayMutation, CompleteDayMutationVariables>;
+export const CreatePartnerRequestDocument = gql`
+    mutation CreatePartnerRequest($input: CreatePartnerRequestInput!) {
+  createPartnerRequest(input: $input) {
+    _id
+    createdAt
+    request
+  }
+}
+    `;
+
+/**
+ * __useCreatePartnerRequestMutation__
+ *
+ * To run a mutation, you first call `useCreatePartnerRequestMutation` within a Vue component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePartnerRequestMutation` returns an object that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - Several other properties: https://v4.apollo.vuejs.org/api/use-mutation.html#return
+ *
+ * @param options that will be passed into the mutation, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/mutation.html#options;
+ *
+ * @example
+ * const { mutate, loading, error, onDone } = useCreatePartnerRequestMutation({
+ *   variables: {
+ *     input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreatePartnerRequestMutation(options: VueApolloComposable.UseMutationOptions<CreatePartnerRequestMutation, CreatePartnerRequestMutationVariables> | ReactiveFunction<VueApolloComposable.UseMutationOptions<CreatePartnerRequestMutation, CreatePartnerRequestMutationVariables>>) {
+  return VueApolloComposable.useMutation<CreatePartnerRequestMutation, CreatePartnerRequestMutationVariables>(CreatePartnerRequestDocument, options);
+}
+export type CreatePartnerRequestMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<CreatePartnerRequestMutation, CreatePartnerRequestMutationVariables>;
 export const DeletePartnerRequestDocument = gql`
     mutation DeletePartnerRequest($input: DeletePartnerRequestInput!) {
   deletePartnerRequest(input: $input) {
