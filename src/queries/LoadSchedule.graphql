@@ -7,13 +7,7 @@ query LoadSchedule($month: Date!) {
       isSkipped
       dayId
       partners {
-        _id
-        fullName
-        requests {
-          _id
-          createdAt
-          request
-        }
+        ...Partner
       }
     }
   }

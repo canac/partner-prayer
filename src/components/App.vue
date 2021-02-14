@@ -1,12 +1,11 @@
 <template>
-  <PartnerSchedule />
+  <router-view />
 </template>
 
 <script lang="ts">
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import { DefaultApolloClient } from '@vue/apollo-composable';
 import { defineComponent, provide } from 'vue';
-import PartnerSchedule from './PartnerSchedule.vue';
 
 import '@fortawesome/fontawesome-free/css/solid.css';
 import '@fortawesome/fontawesome-free/css/fontawesome.css';
@@ -32,8 +31,6 @@ const apolloClient = new ApolloClient({
 });
 
 export default defineComponent({
-  components: { PartnerSchedule },
-
   setup() {
     provide(DefaultApolloClient, apolloClient);
   },

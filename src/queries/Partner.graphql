@@ -1,0 +1,9 @@
+fragment Partner on Partner {
+  _id
+  fullName
+  requests {
+    _id
+    createdAt
+    request
+  }
+}

@@ -1,5 +1,6 @@
 <template>
   <div class="partner-schedule">
+    <router-view />
     <MonthCalendar
       v-if="schedule"
       v-slot="{ index: dayId }"

@@ -200,14 +200,19 @@ export type LoadScheduleQuery = (
       & Pick<ScheduleDay, '_id' | 'isSkipped' | 'dayId'>
       & { partners: Array<(
         { __typename?: 'Partner' }
-        & Pick<Partner, '_id' | 'fullName'>
-        & { requests: Array<(
-          { __typename?: 'PartnerRequest' }
-          & Pick<PartnerRequest, '_id' | 'createdAt' | 'request'>
-        )> }
+        & PartnerFragment
       )> }
     )> }
   ) }
+);
+
+export type PartnerFragment = (
+  { __typename?: 'Partner' }
+  & Pick<Partner, '_id' | 'fullName'>
+  & { requests: Array<(
+    { __typename?: 'PartnerRequest' }
+    & Pick<PartnerRequest, '_id' | 'createdAt' | 'request'>
+  )> }
 );
 
 export type PartnerRequestsFragment = (
@@ -239,6 +244,17 @@ export type SkipDayMutation = (
   ) }
 );
 
+export const PartnerFragmentDoc = gql`
+    fragment Partner on Partner {
+  _id
+  fullName
+  requests {
+    _id
+    createdAt
+    request
+  }
+}
+    `;
 export const PartnerRequestsFragmentDoc = gql`
     fragment PartnerRequests on Partner {
   requests {
@@ -352,18 +368,12 @@ export const LoadScheduleDocument = gql`
       isSkipped
       dayId
       partners {
-        _id
-        fullName
-        requests {
-          _id
-          createdAt
-          request
-        }
+        ...Partner
       }
     }
   }
 }
-    `;
+    ${PartnerFragmentDoc}`;
 
 /**
  * __useLoadScheduleQuery__

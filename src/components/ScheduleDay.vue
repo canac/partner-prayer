@@ -39,7 +39,9 @@
       :key="partner._id"
       class="partner"
     >
-      {{ partner.fullName }}
+      <router-link :to="{ name: 'PartnerDetail', params: { partnerId: partner._id }}">
+        {{ partner.fullName }}
+      </router-link>
     </div>
   </div>
 </template>

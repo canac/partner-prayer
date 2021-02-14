@@ -1,5 +1,8 @@
 <template>
-  <div class="partner-detail">
+  <div
+    v-if="partner"
+    class="partner-detail"
+  >
     <div class="partner-name">
       {{ partner.fullName }}
     </div>
@@ -27,21 +30,21 @@
 </template>
 
 <script lang="ts">
+import { useApolloClient } from '@vue/apollo-composable';
 import { format } from 'date-fns';
-import { PropType, defineComponent, ref } from 'vue';
+import {
+  Ref, defineComponent, ref, watch,
+} from 'vue';
+import { useRoute } from 'vue-router';
 import useCreatePartnerRequest from '../composables/useCreatePartnerRequest';
 import useDeletePartnerRequest from '../composables/useDeletePartnerRequest';
+import { PartnerFragment, PartnerFragmentDoc } from '../generated/graphql';
 import { Partner, PartnerRequest } from '../types';
 
 export default defineComponent({
-  props: {
-    partner: {
-      type: Object as PropType<Partner>,
-      required: true,
-    },
-  },
+  setup() {
+    const partner: Ref<Partner | null> = ref(null);
 
-  setup(props) {
     const newRequest = ref('');
 
     const { createPartnerRequest } = useCreatePartnerRequest();
@@ -49,11 +52,40 @@ export default defineComponent({
 
     // Create a new partner request on the partner using the information in the form
     async function createRequest() {
-      await createPartnerRequest(props.partner._id, newRequest.value);
+      if (!partner.value) {
+        throw new Error('Partner does not exist');
+      }
+
+      await createPartnerRequest(partner.value._id, newRequest.value);
       newRequest.value = '';
     }
 
+    const apollo = useApolloClient();
+
+    const route = useRoute();
+    watch(() => route.params, ({ partnerId }) => {
+      if (typeof partnerId !== 'string') {
+        throw new Error('Invalid partnerId');
+      }
+
+      const cachedPartner = apollo.client.readFragment<PartnerFragment>({
+        id: `Partner:${partnerId}`,
+        fragment: PartnerFragmentDoc,
+      });
+
+      partner.value = cachedPartner && {
+        ...cachedPartner,
+
+        // Add the partnerId to the requests
+        requests: cachedPartner.requests.map((request) => ({
+          ...request,
+          partnerId,
+        })),
+      };
+    }, { immediate: true });
+
     return {
+      partner,
       newRequest,
       createRequest,
       deleteRequest: deletePartnerRequest,
