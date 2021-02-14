@@ -70,8 +70,14 @@ export type Schedule = {
 
 export type Query = {
   __typename?: 'Query';
+  partner?: Maybe<Partner>;
   partners: Array<Partner>;
   schedule: Schedule;
+};
+
+
+export type QueryPartnerArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -183,6 +189,19 @@ export type DeletePartnerRequestMutation = (
     { __typename?: 'DeletePartnerRequestPayload' }
     & Pick<DeletePartnerRequestPayload, 'partnerRequestId'>
   ) }
+);
+
+export type LoadPartnerQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type LoadPartnerQuery = (
+  { __typename?: 'Query' }
+  & { partner?: Maybe<(
+    { __typename?: 'Partner' }
+    & PartnerFragment
+  )> }
 );
 
 export type LoadScheduleQueryVariables = Exact<{
@@ -358,6 +377,33 @@ export function useDeletePartnerRequestMutation(options: VueApolloComposable.Use
   return VueApolloComposable.useMutation<DeletePartnerRequestMutation, DeletePartnerRequestMutationVariables>(DeletePartnerRequestDocument, options);
 }
 export type DeletePartnerRequestMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<DeletePartnerRequestMutation, DeletePartnerRequestMutationVariables>;
+export const LoadPartnerDocument = gql`
+    query LoadPartner($id: ID!) {
+  partner(id: $id) {
+    ...Partner
+  }
+}
+    ${PartnerFragmentDoc}`;
+
+/**
+ * __useLoadPartnerQuery__
+ *
+ * To run a query within a Vue component, call `useLoadPartnerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoadPartnerQuery` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param variables that will be passed into the query
+ * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useLoadPartnerQuery({
+ *   id: // value for 'id'
+ * });
+ */
+export function useLoadPartnerQuery(variables: LoadPartnerQueryVariables | VueCompositionApi.Ref<LoadPartnerQueryVariables> | ReactiveFunction<LoadPartnerQueryVariables>, options: VueApolloComposable.UseQueryOptions<LoadPartnerQuery, LoadPartnerQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<LoadPartnerQuery, LoadPartnerQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<LoadPartnerQuery, LoadPartnerQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<LoadPartnerQuery, LoadPartnerQueryVariables>(LoadPartnerDocument, variables, options);
+}
+export type LoadPartnerQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<LoadPartnerQuery, LoadPartnerQueryVariables>;
 export const LoadScheduleDocument = gql`
     query LoadSchedule($month: Date!) {
   schedule(month: $month) {

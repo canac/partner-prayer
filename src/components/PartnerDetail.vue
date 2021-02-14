@@ -30,22 +30,29 @@
 </template>
 
 <script lang="ts">
-import { useApolloClient } from '@vue/apollo-composable';
 import { format } from 'date-fns';
-import {
-  Ref, defineComponent, ref, watch,
-} from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import useCreatePartnerRequest from '../composables/useCreatePartnerRequest';
 import useDeletePartnerRequest from '../composables/useDeletePartnerRequest';
-import { PartnerFragment, PartnerFragmentDoc } from '../generated/graphql';
-import { Partner, PartnerRequest } from '../types';
+import useLoadPartner from '../composables/useLoadPartner';
+import { PartnerRequest } from '../types';
 
 export default defineComponent({
   setup() {
-    const partner: Ref<Partner | null> = ref(null);
-
     const newRequest = ref('');
+
+    // Load the partner based on the route
+    const route = useRoute();
+    const partnerId = computed((): string => {
+      const id = route.params.partnerId;
+      if (typeof id !== 'string') {
+        throw new Error('Invalid partnerId');
+      }
+
+      return id;
+    });
+    const { partner } = useLoadPartner(partnerId);
 
     const { createPartnerRequest } = useCreatePartnerRequest();
     const { deletePartnerRequest } = useDeletePartnerRequest();
@@ -59,30 +66,6 @@ export default defineComponent({
       await createPartnerRequest(partner.value._id, newRequest.value);
       newRequest.value = '';
     }
-
-    const apollo = useApolloClient();
-
-    const route = useRoute();
-    watch(() => route.params, ({ partnerId }) => {
-      if (typeof partnerId !== 'string') {
-        throw new Error('Invalid partnerId');
-      }
-
-      const cachedPartner = apollo.client.readFragment<PartnerFragment>({
-        id: `Partner:${partnerId}`,
-        fragment: PartnerFragmentDoc,
-      });
-
-      partner.value = cachedPartner && {
-        ...cachedPartner,
-
-        // Add the partnerId to the requests
-        requests: cachedPartner.requests.map((request) => ({
-          ...request,
-          partnerId,
-        })),
-      };
-    }, { immediate: true });
 
     return {
       partner,

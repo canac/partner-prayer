@@ -1,0 +1,5 @@
+query LoadPartner($id: ID!) {
+  partner(id: $id) {
+    ...Partner
+  }
+}
