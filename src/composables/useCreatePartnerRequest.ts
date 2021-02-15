@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import {
   PartnerRequestsFragment, PartnerRequestsFragmentDoc,
   useCreatePartnerRequestMutation,
@@ -35,6 +36,15 @@ export default function useCreatePartnerRequest(): {
             },
           });
         }
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        createPartnerRequest: {
+          __typename: 'PartnerRequest',
+          _id: v4(),
+          createdAt: new Date(),
+          request,
+        },
       },
     });
 

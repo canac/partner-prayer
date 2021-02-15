@@ -31,6 +31,13 @@ export default function useDeletePartnerRequest(): {
           });
         }
       },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        deletePartnerRequest: {
+          __typename: 'DeletePartnerRequestPayload',
+          partnerRequestId: deletingRequest._id,
+        },
+      },
     });
   }
 
