@@ -3,12 +3,17 @@
     v-if="partner"
     class="partner-detail"
   >
-    <div class="partner-name">
-      {{ partner.fullName }}
+    <div class="partner-header">
+      <span class="partner-name">{{ partner.fullName }}</span>
+      <router-link
+        :to="{ name: 'PartnerSchedule' }"
+        class="fas fa-fw fa-times close-detail"
+      />
     </div>
     <div
       v-for="request in partner.requests"
       :key="request._id"
+      class="partner-request"
     >
       <span class="request-time">{{ formatRequestTimestamp(request) }}</span>:
       <span class="request-content">{{ request.request }}</span>
@@ -20,10 +25,10 @@
     <form @submit.prevent="createRequest(newRequest)">
       <input
         v-model="newRequest"
-        placeholder="Prayer request"
+        placeholder="New prayer request"
       >
       <button type="submit">
-        Create
+        Add
       </button>
     </form>
   </div>
@@ -47,7 +52,7 @@ export default defineComponent({
     const partnerId = computed((): string => {
       const id = route.params.partnerId;
       if (typeof id !== 'string') {
-        throw new Error('Invalid partnerId');
+        return '';
       }
 
       return id;
@@ -85,12 +90,40 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.partner-header {
+  display: flex;
+  font-size: 1.3em;
+}
+
+.partner-name {
+  flex: 1;
+}
+
 .partner-name {
   padding-bottom: 0.5em;
-  font-size: 1.5em;
+  text-align: center;
+}
+
+.partner-request {
+  padding: 0.5em 0;
+}
+
+.close-detail {
+  color: gray;
 }
 
 .delete-request {
   color: hsl(0, 50%, 50%);
+}
+
+form {
+  display: flex;
+  padding-top: 0.5em;
+  border-top: 1px solid gray;
+}
+
+form input {
+  flex-grow: 1;
+  margin-right: 0.5em;
 }
 </style>

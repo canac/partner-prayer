@@ -102,6 +102,7 @@ export default defineComponent({
 }
 
 .day-header button {
+  padding: 0;
   border: none;
   background-color: transparent;
   font-size: inherit;
@@ -139,5 +140,9 @@ export default defineComponent({
 
 .schedule-day {
   --icon-font-size: 1.3em;
+}
+
+a.router-link-active {
+  font-weight: bold;
 }
 </style>

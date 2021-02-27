@@ -62,10 +62,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.month-calendar {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 .month-title {
   padding-bottom: 0.5em;
   font-size: 1.5em;

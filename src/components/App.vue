@@ -36,3 +36,14 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+</style>

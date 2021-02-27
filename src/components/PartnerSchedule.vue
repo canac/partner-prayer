@@ -1,6 +1,5 @@
 <template>
   <div class="partner-schedule">
-    <router-view />
     <MonthCalendar
       v-if="schedule"
       v-slot="{ index: dayId }"
@@ -11,6 +10,7 @@
         :day-id="dayId"
       />
     </MonthCalendar>
+    <router-view />
   </div>
 </template>
 
@@ -36,3 +36,14 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.partner-schedule {
+  display: flex;
+}
+
+.partner-detail {
+  min-width: 20vw;
+  padding-left: 1em;
+}
+</style>
