@@ -13,6 +13,7 @@
     "lint": "npm run lint:ts && npm run lint:css",
     "lint:ts": "eslint .",
     "lint:css": "stylelint src/components/*.vue",
+    "postinstall": "patch-package",
     "start": "node ."
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-vue": "^7.6.0",
+    "patch-package": "^6.4.7",
     "snowpack": "^3.0.13",
     "stylelint": "^13.11.0",
     "stylelint-config-idiomatic-order": "^8.1.0",

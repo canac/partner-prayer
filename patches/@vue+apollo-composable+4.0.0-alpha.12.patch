@@ -1,0 +1,36 @@
+diff --git a/node_modules/@vue/apollo-composable/dist/useMutation.d.ts b/node_modules/@vue/apollo-composable/dist/useMutation.d.ts
+index cb20c3f..b3410c5 100644
+--- a/node_modules/@vue/apollo-composable/dist/useMutation.d.ts
++++ b/node_modules/@vue/apollo-composable/dist/useMutation.d.ts
+@@ -10,9 +10,9 @@ export interface UseMutationOptions<TResult = any, TVariables = OperationVariabl
+ }
+ declare type DocumentParameter = DocumentNode | Ref<DocumentNode> | ReactiveFunction<DocumentNode>;
+ declare type OptionsParameter<TResult, TVariables> = UseMutationOptions<TResult, TVariables> | Ref<UseMutationOptions<TResult, TVariables>> | ReactiveFunction<UseMutationOptions<TResult, TVariables>>;
+-export declare type MutateOverrideOptions = Pick<UseMutationOptions<any, OperationVariables>, 'update' | 'optimisticResponse' | 'context' | 'updateQueries' | 'refetchQueries' | 'awaitRefetchQueries' | 'errorPolicy' | 'fetchPolicy' | 'clientId'>;
++export declare type MutateOverrideOptions<TResult> = Pick<UseMutationOptions<TResult, OperationVariables>, 'update' | 'optimisticResponse' | 'context' | 'updateQueries' | 'refetchQueries' | 'awaitRefetchQueries' | 'errorPolicy' | 'fetchPolicy' | 'clientId'>;
+ export declare type MutateResult<TResult> = Promise<FetchResult<TResult, Record<string, any>, Record<string, any>>>;
+-export declare type MutateFunction<TResult, TVariables> = (variables?: TVariables, overrideOptions?: MutateOverrideOptions) => MutateResult<TResult>;
++export declare type MutateFunction<TResult, TVariables> = (variables?: TVariables, overrideOptions?: MutateOverrideOptions<TResult>) => MutateResult<TResult>;
+ export interface UseMutationReturn<TResult, TVariables> {
+     mutate: MutateFunction<TResult, TVariables>;
+     loading: Ref<boolean>;
+diff --git a/node_modules/@vue/apollo-composable/dist/useQuery.js b/node_modules/@vue/apollo-composable/dist/useQuery.js
+index 0d4ce68..2f1f62c 100644
+--- a/node_modules/@vue/apollo-composable/dist/useQuery.js
++++ b/node_modules/@vue/apollo-composable/dist/useQuery.js
+@@ -11,13 +11,14 @@ var __assign = (this && this.__assign) || function () {
+ };
+ import { ref, isRef, computed, watch, 
+ // @ts-expect-error
+-onServerPrefetch, getCurrentInstance, onBeforeUnmount, nextTick, } from 'vue-demi';
++getCurrentInstance, onBeforeUnmount, nextTick, } from 'vue-demi';
+ import { throttle, debounce } from 'throttle-debounce';
+ import { useApolloClient } from './useApolloClient';
+ import { paramToRef } from './util/paramToRef';
+ import { paramToReactive } from './util/paramToReactive';
+ import { useEventHook } from './util/useEventHook';
+ import { trackQuery } from './util/loadingTracking';
++const onServerPrefetch = null;
+ export function useQuery(document, variables, options) {
+     return useQueryImpl(document, variables, options);
+ }
