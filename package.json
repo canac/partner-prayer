@@ -4,7 +4,6 @@
   "description": "Partner Prayer",
   "author": "Caleb Cox",
   "license": "MIT",
-  "main": "server/app.mjs",
   "scripts": {
     "build": "snowpack build",
     "dev": "snowpack dev",
@@ -13,8 +12,7 @@
     "lint": "npm run lint:ts && npm run lint:css",
     "lint:ts": "eslint .",
     "lint:css": "stylelint src/components/*.vue",
-    "postinstall": "patch-package",
-    "start": "node ."
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@apollo/client": "^3.3.11",
@@ -22,7 +20,6 @@
     "@vue/apollo-composable": "^4.0.0-alpha.12",
     "date-fns": "^2.17.0",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.12.1",
     "uuid": "^8.3.2",
