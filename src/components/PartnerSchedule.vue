@@ -5,10 +5,7 @@
       v-slot="{ index: dayId }"
       :month="activeMonth"
     >
-      <ScheduleDay
-        :schedule="schedule"
-        :day-id="dayId"
-      />
+      <ScheduleDay :schedule="schedule" :day-id="dayId" />
     </MonthCalendar>
     <router-view />
   </div>

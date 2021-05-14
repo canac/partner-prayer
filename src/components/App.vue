@@ -3,7 +3,11 @@
 </template>
 
 <script lang="ts">
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
+import {
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink,
+} from '@apollo/client/core';
 import { DefaultApolloClient } from '@vue/apollo-composable';
 import { defineComponent, provide } from 'vue';
 

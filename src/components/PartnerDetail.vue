@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="partner"
-    class="partner-detail"
-  >
+  <div v-if="partner" class="partner-detail">
     <div class="partner-header">
       <span class="partner-name">{{ partner.fullName }}</span>
       <router-link
@@ -15,7 +12,8 @@
       :key="request._id"
       class="partner-request"
     >
-      <span class="request-time">{{ formatRequestTimestamp(request) }}</span>:
+      <span class="request-time">{{ formatRequestTimestamp(request) }}</span
+      >:
       <span class="request-content">{{ request.request }}</span>
       <i
         class="fas fa-fw fa-times delete-request"
@@ -23,13 +21,8 @@
       />
     </div>
     <form @submit.prevent="createRequest(newRequest)">
-      <input
-        v-model="newRequest"
-        placeholder="New prayer request"
-      >
-      <button type="submit">
-        Add
-      </button>
+      <input v-model="newRequest" placeholder="New prayer request" />
+      <button type="submit">Add</button>
     </form>
   </div>
 </template>

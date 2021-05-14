@@ -2,9 +2,13 @@ import { Ref } from 'vue';
 import { useCompleteDayMutation } from '../generated/graphql';
 import { Schedule } from '../types';
 
-export default function useCompleteDay({ schedule }: { schedule: Ref<Schedule> }): {
-  completeDay: (dayId: number) => Promise<void>,
-  uncompleteDay: (dayId: number) => Promise<void>,
+export default function useCompleteDay({
+  schedule,
+}: {
+  schedule: Ref<Schedule>;
+}): {
+  completeDay: (dayId: number) => Promise<void>;
+  uncompleteDay: (dayId: number) => Promise<void>;
 } {
   const { mutate } = useCompleteDayMutation({});
 

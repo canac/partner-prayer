@@ -5,7 +5,7 @@ import { LoadScheduleQuery, useLoadScheduleQuery } from '../generated/graphql';
 import { Schedule } from '../types';
 
 export default function useLoadSchedule(month: Date): {
-  schedule: Ref<Schedule | undefined>,
+  schedule: Ref<Schedule | undefined>;
 } {
   const { result } = useLoadScheduleQuery({
     month: format(month, 'yyyy-MM-dd'),
@@ -15,18 +15,21 @@ export default function useLoadSchedule(month: Date): {
 
   return {
     // Dynamically add the partnerId to each partner request
-    schedule: computed(() => schedule.value && {
-      ...schedule.value,
-      days: schedule.value.days.map((day) => ({
-        ...day,
-        partners: day.partners.map((partner) => ({
-          ...partner,
-          requests: partner.requests.map((request) => ({
-            ...request,
-            partnerId: partner._id,
+    schedule: computed(
+      () =>
+        schedule.value && {
+          ...schedule.value,
+          days: schedule.value.days.map((day) => ({
+            ...day,
+            partners: day.partners.map((partner) => ({
+              ...partner,
+              requests: partner.requests.map((request) => ({
+                ...request,
+                partnerId: partner._id,
+              })),
+            })),
           })),
-        })),
-      })),
-    }),
+        },
+    ),
   };
 }

@@ -2,18 +2,12 @@
   <div
     v-if="day"
     class="schedule-day"
-    :class="isSkipped ? 'skipped' : (isComplete ? 'complete' : 'incomplete')"
+    :class="isSkipped ? 'skipped' : isComplete ? 'complete' : 'incomplete'"
   >
     <div class="day-header">
       <div class="button-slot">
-        <button
-          class="toggle-active"
-          @click="toggleDaySkipped()"
-        >
-          <i
-            class="fas fa-fw"
-            :class="isSkipped ? 'fa-eye' : 'fa-eye-slash'"
-          />
+        <button class="toggle-active" @click="toggleDaySkipped()">
+          <i class="fas fa-fw" :class="isSkipped ? 'fa-eye' : 'fa-eye-slash'" />
         </button>
       </div>
       <span class="day-title">{{ day.dayId + 1 }}</span>
@@ -34,12 +28,10 @@
         </button>
       </div>
     </div>
-    <div
-      v-for="partner in day.partners"
-      :key="partner._id"
-      class="partner"
-    >
-      <router-link :to="{ name: 'PartnerDetail', params: { partnerId: partner._id }}">
+    <div v-for="partner in day.partners" :key="partner._id" class="partner">
+      <router-link
+        :to="{ name: 'PartnerDetail', params: { partnerId: partner._id } }"
+      >
         {{ partner.fullName }}
       </router-link>
     </div>
@@ -47,9 +39,7 @@
 </template>
 
 <script lang="ts">
-import {
-  PropType, computed, defineComponent, toRefs,
-} from 'vue';
+import { PropType, computed, defineComponent, toRefs } from 'vue';
 import useCompleteDay from '../composables/useCompleteDay';
 import useToggleDaySkipped from '../composables/useSkipDay';
 import { Day, Schedule } from '../types';
@@ -68,9 +58,13 @@ export default defineComponent({
 
   setup(props) {
     const { schedule, dayId } = toRefs(props);
-    const day = computed((): Day | null => schedule.value.days[dayId.value] || null);
+    const day = computed(
+      (): Day | null => schedule.value.days[dayId.value] || null,
+    );
     const isSkipped = computed((): boolean => day.value?.isSkipped ?? false);
-    const isComplete = computed((): boolean => schedule.value.completedDays > (day.value?.dayId ?? 0));
+    const isComplete = computed(
+      (): boolean => schedule.value.completedDays > (day.value?.dayId ?? 0),
+    );
     const { toggleDaySkipped } = useToggleDaySkipped({ schedule });
     const { completeDay, uncompleteDay } = useCompleteDay({ schedule });
 

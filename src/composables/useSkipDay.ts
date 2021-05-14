@@ -2,8 +2,12 @@ import { Ref } from 'vue';
 import { useSkipDayMutation } from '../generated/graphql';
 import { Schedule } from '../types';
 
-export default function useToggleDaySkipped({ schedule }: { schedule: Ref<Schedule> }): {
-  toggleDaySkipped: (dayId: number) => Promise<void>,
+export default function useToggleDaySkipped({
+  schedule,
+}: {
+  schedule: Ref<Schedule>;
+}): {
+  toggleDaySkipped: (dayId: number) => Promise<void>;
 } {
   const { mutate } = useSkipDayMutation({});
 
