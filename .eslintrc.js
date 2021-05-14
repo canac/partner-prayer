@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports = {
-  ignorePatterns: ['dist/', 'src/generated/'],
   extends: [
     'airbnb-base',
   ],
@@ -22,6 +21,7 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       project: 'tsconfig.json',
       extraFileExtensions: ['.vue'],
+  ignorePatterns: ['build/', 'dist/', 'src/generated/'],
     },
     rules: {
       'import/extensions': 0,
