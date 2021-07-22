@@ -18,7 +18,7 @@ export default function useCreatePartnerRequest(): {
     partnerId: string,
     request: string,
   ): Promise<PartnerRequest> {
-    const { data } = await mutate(
+    const mutationResult = await mutate(
       {
         input: {
           partnerId,
@@ -61,6 +61,7 @@ export default function useCreatePartnerRequest(): {
       },
     );
 
+    const data = mutationResult?.data
     if (!data) {
       throw new Error('Partner request was not created');
     }
