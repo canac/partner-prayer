@@ -61,7 +61,7 @@ export default function useCreatePartnerRequest(): {
       },
     );
 
-    const data = mutationResult?.data
+    const data = mutationResult?.data;
     if (!data) {
       throw new Error('Partner request was not created');
     }

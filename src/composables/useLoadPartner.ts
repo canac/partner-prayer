@@ -36,8 +36,10 @@ export default function useLoadPartner(partnerId: Ref<string>): {
   const { result, loading } = useLoadPartnerQuery(() => ({
     id: partnerId.value,
   }));
-  const loadedPartner: Ref<PartnerFragment | null | undefined> =
-    useResult<LoadPartnerQuery, 'partner'>(result);
+  const loadedPartner: Ref<PartnerFragment | null | undefined> = useResult<
+    LoadPartnerQuery,
+    'partner'
+  >(result);
 
   return {
     partner: computed((): Partner | null => {
