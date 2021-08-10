@@ -1,18 +1,19 @@
-'use strict';
-
 /* eslint-disable import/no-extraneous-dependencies */
-require('dotenv').config();
-const replace = require('@rollup/plugin-replace');
+import { config } from 'dotenv';
+import replace from '@rollup/plugin-replace';
 
-module.exports = {
+config();
+
+export default {
   mount: {
     public: { url: '/', static: true },
     src: '/_dist_',
-    'node_modules/@fortawesome/fontawesome-free/webfonts': { url: '/webfonts', static: true },
+    'node_modules/@fortawesome/fontawesome-free/webfonts': {
+      url: '/webfonts',
+      static: true,
+    },
   },
-  plugins: [
-    '@snowpack/plugin-vue',
-  ],
+  plugins: ['@snowpack/plugin-vue'],
   packageOptions: {
     rollup: {
       plugins: [

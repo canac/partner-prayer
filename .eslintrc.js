@@ -6,7 +6,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier'],
   overrides: [
     {
-      files: ['./.eslintrc.js', './snowpack.config.js'],
+      files: ['./.eslintrc.js'],
       parserOptions: {
         sourceType: 'script',
       },
