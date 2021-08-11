@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-  ignorePatterns: ['build/', 'dist/', 'src/generated/'],
+  ignorePatterns: ['build/', 'src/generated/'],
   extends: ['airbnb-base'],
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier-vue'],
   overrides: [
     {
       files: ['./.eslintrc.js'],
@@ -15,8 +15,7 @@ module.exports = {
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
-        'plugin:vue/recommended',
-        'prettier',
+        'plugin:prettier-vue/recommended',
       ],
       files: ['src/**/*.ts', 'src/**/*.vue'],
       parser: 'vue-eslint-parser',
