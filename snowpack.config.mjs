@@ -1,8 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { config } from 'dotenv';
 import replace from '@rollup/plugin-replace';
-
-config();
 
 export default {
   mount: {
@@ -13,7 +10,7 @@ export default {
       static: true,
     },
   },
-  plugins: ['@snowpack/plugin-vue'],
+  plugins: ['@snowpack/plugin-vue', '@snowpack/plugin-dotenv'],
   packageOptions: {
     rollup: {
       plugins: [
