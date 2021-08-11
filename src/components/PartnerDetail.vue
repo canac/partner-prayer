@@ -66,19 +66,18 @@ export default defineComponent({
       newRequest.value = '';
     }
 
+    // Convert the request timestamp to a human-readable string
+    function formatRequestTimestamp(request: PartnerRequest): string {
+      return format(new Date(request.createdAt), 'MMM d, yyyy');
+    }
+
     return {
       partner,
       newRequest,
       createRequest,
       deleteRequest: deletePartnerRequest,
+      formatRequestTimestamp,
     };
-  },
-
-  methods: {
-    // Convert the request timestamp to a human-readable string
-    formatRequestTimestamp(request: PartnerRequest): string {
-      return format(new Date(request.createdAt), 'MMM d, yyyy');
-    },
   },
 });
 </script>
