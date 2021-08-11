@@ -23,7 +23,7 @@
           <font-awesome-icon icon="check" fixed-width />
         </button>
         <button
-          v-if="isComplete && !isSkipped"
+          v-if="isComplete && (!isSkipped || day.partners.length > 0)"
           class="mark-incomplete"
           @click="uncompleteDay()"
         >
