@@ -6,6 +6,10 @@ export default {
     public: { url: '/', static: true },
     src: '/dist',
   },
+  optimize: {
+    bundle: true,
+    minify: true,
+  },
   plugins: ['@snowpack/plugin-vue', '@snowpack/plugin-dotenv'],
   packageOptions: {
     rollup: {

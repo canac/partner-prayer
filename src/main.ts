@@ -6,8 +6,14 @@ import router from './router';
 const app = createApp(App);
 app.use(router);
 // Wait for the router to be ready before mounting the app
-await router.isReady();
-app.component('FontAwesomeIcon', FontAwesomeIcon).mount('#app');
+router
+  .isReady()
+  .then(() => {
+    app.component('FontAwesomeIcon', FontAwesomeIcon).mount('#app');
+  })
+  .catch((err) => {
+    throw err;
+  });
 
 if (import.meta.hot) {
   import.meta.hot.accept();
