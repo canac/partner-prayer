@@ -6,7 +6,7 @@
   >
     <div class="day-header">
       <div class="button-slot">
-        <button class="toggle-active" @click="toggleDaySkipped()">
+        <button class="toggle-skipped" @click="toggleDaySkipped()">
           <font-awesome-icon
             :icon="['fas', isSkipped ? 'eye' : 'eye-slash']"
             fixed-width
@@ -111,7 +111,7 @@ export default defineComponent({
 .day-header .mark-incomplete {
   color: hsl(0, 50%, 50%);
 }
-.day-header .toggle-active {
+.day-header .toggle-skipped {
   color: #999999;
 }
 
