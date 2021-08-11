@@ -4,7 +4,7 @@ import replace from '@rollup/plugin-replace';
 export default {
   mount: {
     public: { url: '/', static: true },
-    src: '/_dist_',
+    src: '/dist',
   },
   plugins: ['@snowpack/plugin-vue', '@snowpack/plugin-dotenv'],
   packageOptions: {
