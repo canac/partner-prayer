@@ -7,7 +7,10 @@
     <div class="day-header">
       <div class="button-slot">
         <button class="toggle-active" @click="toggleDaySkipped()">
-          <i class="fas fa-fw" :class="isSkipped ? 'fa-eye' : 'fa-eye-slash'" />
+          <font-awesome-icon
+            :icon="['fas', isSkipped ? 'eye' : 'eye-slash']"
+            fixed-width
+          />
         </button>
       </div>
       <span class="day-title">{{ day.dayId + 1 }}</span>
@@ -17,14 +20,14 @@
           class="mark-complete"
           @click="completeDay()"
         >
-          <i class="fas fa-fw fa-check" />
+          <font-awesome-icon icon="check" fixed-width />
         </button>
         <button
           v-if="isComplete && !isSkipped"
           class="mark-incomplete"
           @click="uncompleteDay()"
         >
-          <i class="fas fa-fw fa-trash" />
+          <font-awesome-icon icon="trash" fixed-width />
         </button>
       </div>
     </div>

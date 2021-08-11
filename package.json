@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.21",
-    "@fortawesome/fontawesome-free": "^5.15.3",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/vue-fontawesome": "^3.0.0-4",
     "@vue/apollo-composable": "^4.0.0-alpha.14",
     "date-fns": "^2.22.1",
     "graphql": "^15.5.1",

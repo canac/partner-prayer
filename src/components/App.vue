@@ -8,11 +8,19 @@ import {
   InMemoryCache,
   createHttpLink,
 } from '@apollo/client/core';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+  faCheck,
+  faEye,
+  faEyeSlash,
+  faTimes,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { DefaultApolloClient } from '@vue/apollo-composable';
 import { defineComponent, provide } from 'vue';
 
-import '@fortawesome/fontawesome-free/css/solid.css';
-import '@fortawesome/fontawesome-free/css/fontawesome.css';
+// Load all icons used throughout the app
+library.add(faCheck, faEye, faEyeSlash, faTimes, faTrash);
 
 // HTTP connection to the API
 const httpLink = createHttpLink({

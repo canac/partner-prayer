@@ -2,10 +2,9 @@
   <div v-if="partner" class="partner-detail">
     <div class="partner-header">
       <span class="partner-name">{{ partner.fullName }}</span>
-      <router-link
-        :to="{ name: 'PartnerSchedule' }"
-        class="fas fa-fw fa-times close-detail"
-      />
+      <router-link :to="{ name: 'PartnerSchedule' }" class="close-detail">
+        <font-awesome-icon icon="times" fixed-width />
+      </router-link>
     </div>
     <div
       v-for="request in partner.requests"
@@ -15,8 +14,10 @@
       <span class="request-time">{{ formatRequestTimestamp(request) }}</span
       >:
       <span class="request-content">{{ request.request }}</span>
-      <i
-        class="fas fa-fw fa-times delete-request"
+      <font-awesome-icon
+        class="delete-request"
+        icon="times"
+        fixed-width
         @click="deleteRequest(request)"
       />
     </div>
